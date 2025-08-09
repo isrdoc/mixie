@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "turbo run build --filter=mixie-web",
-  "outputDirectory": "apps/web/dist",
+  "buildCommand": "turbo run build --filter=mixie-web && cp -r apps/web/dist ./dist",
+  "outputDirectory": "dist",
   "installCommand": "pnpm install --frozen-lockfile"
 }
