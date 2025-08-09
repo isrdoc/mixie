@@ -1,24 +1,14 @@
-import React from "react";
 import { createRoot } from "react-dom/client";
 import "./style.css";
-import typescriptLogo from "/typescript.svg";
-import { Header, Counter } from "@repo/ui";
+import { Header } from "@repo/ui";
 
 const App = () => (
   <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" className="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img
-        src={typescriptLogo}
-        className="logo vanilla"
-        alt="TypeScript logo"
-      />
-    </a>
-    <Header title="Web" />
+    <Header title="Mixie" />
     <div className="card">
-      <Counter />
+      <p>
+        Welcome to Mixie - A next-generation platform for music fans and curators to discover, share, and connect through playlists.
+      </p>
     </div>
   </div>
 );
