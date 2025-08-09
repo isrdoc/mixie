@@ -1,5 +1,7 @@
 {
+  "name": "mixie",
   "private": true,
+  "packageManager": "pnpm@8.15.6",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
@@ -10,7 +12,5 @@
     "eslint": "^8.57.0",
     "prettier": "^3.2.5",
     "turbo": "^2.5.5"
-  },
-  "packageManager": "pnpm@8.15.6",
-  "name": "with-vite-react"
+  }
 }
