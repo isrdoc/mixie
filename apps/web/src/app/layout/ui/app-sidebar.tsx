@@ -1,10 +1,6 @@
 import {
-  IconCamera,
   IconChartBar,
-  IconDashboard,
   IconDatabase,
-  IconFileAi,
-  IconFileDescription,
   IconFileWord,
   IconFolder,
   IconHelp,
@@ -39,12 +35,12 @@ const data = {
   },
   navMain: [
     {
-      title: "Dashboard",
+      title: "Discover",
       url: "#",
-      icon: IconDashboard,
+      icon: IconSearch,
     },
     {
-      title: "Lifecycle",
+      title: "My Playlists",
       url: "#",
       icon: IconListDetails,
     },
@@ -54,59 +50,59 @@ const data = {
       icon: IconChartBar,
     },
     {
-      title: "Projects",
+      title: "Library",
       url: "#",
       icon: IconFolder,
     },
     {
-      title: "Team",
+      title: "Community",
       url: "#",
       icon: IconUsers,
     },
   ],
   navClouds: [
     {
-      title: "Capture",
-      icon: IconCamera,
+      title: "Playlists",
+      icon: IconListDetails,
       isActive: true,
       url: "#",
       items: [
         {
-          title: "Active Proposals",
+          title: "Recently Created",
           url: "#",
         },
         {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: IconFileDescription,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
+          title: "Collaborative",
           url: "#",
         },
       ],
     },
     {
-      title: "Prompts",
-      icon: IconFileAi,
+      title: "Collections",
+      icon: IconFolder,
       url: "#",
       items: [
         {
-          title: "Active Proposals",
+          title: "Favorites",
           url: "#",
         },
         {
-          title: "Archived",
+          title: "For You",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Reports",
+      icon: IconReport,
+      url: "#",
+      items: [
+        {
+          title: "Listening Stats",
+          url: "#",
+        },
+        {
+          title: "Engagement",
           url: "#",
         },
       ],
@@ -114,17 +110,17 @@ const data = {
   ],
   navSecondary: [
     {
-      title: "Settings",
+      title: "Account Settings",
       url: "#",
       icon: IconSettings,
     },
     {
-      title: "Get Help",
+      title: "Help & Support",
       url: "#",
       icon: IconHelp,
     },
     {
-      title: "Search",
+      title: "Search Music",
       url: "#",
       icon: IconSearch,
     },
@@ -141,7 +137,7 @@ const data = {
       icon: IconReport,
     },
     {
-      name: "Word Assistant",
+      name: "Integrations",
       url: "#",
       icon: IconFileWord,
     },

@@ -1,6 +1,6 @@
 import { AppSidebar } from "./ui/app-sidebar";
 import { SectionCards } from "./ui/section-cards";
-import { SectionButtons } from "./ui/section-buttons";
+import { SectionButtons } from "./ui/section-welcome";
 import { SiteHeader } from "./ui/site-header";
 import { SidebarInset, SidebarProvider } from "@repo/ui";
 

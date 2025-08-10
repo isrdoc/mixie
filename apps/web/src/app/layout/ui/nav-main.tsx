@@ -25,11 +25,11 @@ export function NavMain({
           <SidebarMenuItem className="flex items-center gap-2">
             <SidebarMenuButton
               variant="secondary"
-              tooltip="Quick Create"
+              tooltip="Connect"
               className="min-w-8 duration-200 ease-linear"
             >
               <IconCirclePlusFilled />
-              <span>Quick Create</span>
+              <span>Connect</span>
             </SidebarMenuButton>
             <Button
               size="icon"
