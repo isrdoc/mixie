@@ -33,9 +33,9 @@ import { NavUser } from "./nav-user";
 
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: "Music Curator",
+    email: "curator@mixie.app",
+    avatar: "/avatars/music-curator.svg",
   },
   navMain: [
     {
