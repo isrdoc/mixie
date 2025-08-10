@@ -5,9 +5,9 @@ export function SectionButtons() {
     <div className="px-4 lg:px-6">
       <p className="text-xl font-semibold">
         Welcome to Mixie - A next-generation platform for music fans and
-        curators to discover, share, and connect through playlists.
+        curators to discover, share, and connect through playlists
       </p>
-      <div className="flex gap-4 mt-6">
+      <div className="flex flex-wrap gap-4 mt-6">
         <Button>Get Started</Button>
         <Button variant="outline">Learn More</Button>
         <Button variant="secondary">Browse Playlists</Button>
