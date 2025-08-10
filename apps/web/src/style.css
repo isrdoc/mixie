@@ -1,99 +1,82 @@
-@import "tailwindcss";
+/* @import "tailwindcss"; */
+/* @source "../../../packages/ui/components"; */
 
 :root {
   --radius: 0.65rem;
-
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
-
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
-
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.141 0.005 285.823);
-
   /* Cyan primary */
   --primary: oklch(0.65 0.22 200);
   --primary-foreground: oklch(0.99 0 0);
-
   /* Subtle cyan-tinted surfaces */
   --secondary: oklch(0.96 0.03 200);
   --secondary-foreground: oklch(0.23 0.02 200);
-
   --muted: oklch(0.965 0.01 200);
   --muted-foreground: oklch(0.55 0.02 200);
-
   --accent: oklch(0.962 0.04 200);
   --accent-foreground: oklch(0.23 0.02 200);
-
   --destructive: oklch(0.577 0.245 27.325);
-
   --border: oklch(0.92 0.004 286.32);
   --input: oklch(0.92 0.004 286.32);
   --ring: oklch(0.65 0.22 200);
-
   /* Charts (cyan-forward palette) */
   --chart-1: oklch(0.67 0.22 200); /* cyan */
   --chart-2: oklch(0.62 0.18 230); /* blue */
   --chart-3: oklch(0.63 0.16 175); /* teal */
   --chart-4: oklch(0.7 0.14 258); /* violet */
   --chart-5: oklch(0.69 0.18 45); /* orange */
-
   /* Sidebar */
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-primary: oklch(0.65 0.22 200);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.962 0.04 200);
-  --sidebar-accent-foreground: oklch(0.23 0.02 200);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.65 0.22 200);
+  --sidebar: hsl(0 0% 98%);
+  --sidebar-foreground: hsl(240 5.3% 26.1%);
+  --sidebar-primary: hsl(240 5.9% 10%);
+  --sidebar-primary-foreground: hsl(0 0% 98%);
+  --sidebar-accent: hsl(240 4.8% 95.9%);
+  --sidebar-accent-foreground: hsl(240 5.9% 10%);
+  --sidebar-border: hsl(220 13% 91%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
 
 .dark {
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
-
   --card: oklch(0.21 0.006 285.885);
   --card-foreground: oklch(0.985 0 0);
-
   --popover: oklch(0.21 0.006 285.885);
   --popover-foreground: oklch(0.985 0 0);
-
   /* Cyan primary (brighter for dark surfaces) */
   --primary: oklch(0.8 0.22 200);
   --primary-foreground: oklch(0.16 0.01 200);
-
   /* Subtle cyan-tinted neutrals */
   --secondary: oklch(0.28 0.01 200);
   --secondary-foreground: oklch(0.985 0 0);
-
   --muted: oklch(0.28 0.008 200);
   --muted-foreground: oklch(0.7 0.015 200);
-
   --accent: oklch(0.28 0.012 200);
   --accent-foreground: oklch(0.985 0 0);
-
   --destructive: oklch(0.704 0.191 22.216);
-
-  --border: oklch(1 0 0 / 10%);
+  /* --border: oklch(1 0 0 / 10%); */
+  --border: oklch(100% 0 0 / 0.1);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.76 0.21 200);
-
+  /* Charts */
   --chart-1: oklch(0.76 0.21 200); /* cyan */
   --chart-2: oklch(0.72 0.18 230); /* blue */
   --chart-3: oklch(0.7 0.16 175); /* teal */
   --chart-4: oklch(0.73 0.15 258); /* violet */
   --chart-5: oklch(0.71 0.19 45); /* orange */
-
-  --sidebar: oklch(0.21 0.006 285.885);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.8 0.22 200);
-  --sidebar-primary-foreground: oklch(0.16 0.01 200);
-  --sidebar-accent: oklch(0.28 0.012 200);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.76 0.21 200);
+  /* Sidebar */
+  --sidebar: hsl(240 5.9% 10%);
+  --sidebar-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-primary: hsl(224.3 76.3% 48%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(240 3.7% 15.9%);
+  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-border: hsl(240 3.7% 15.9%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
 
 :root {
@@ -101,11 +84,7 @@
   font-size: 16px;
   line-height: 24px;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
+  color-scheme: dark;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -116,27 +95,9 @@
 body {
   margin: 0;
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
 }
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+  flex: 1;
+  display: flex;
 }
