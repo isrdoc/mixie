@@ -2,8 +2,6 @@
 
 A next-generation platform for music fans and curators to discover, share, and connect through playlists, spanning multiple streaming services. Mixie is targeted at a community of highly engaged users and curators who want seamless music discovery and sharing experiences.
 
-Test change
-
 ## ✨ Key Features
 
 ### 🎵 Music Discovery & Sharing

@@ -12,7 +12,8 @@
     "db:stop": "supabase stop",
     "db:status": "supabase status",
     "db:reset": "supabase db reset",
-    "env:sync:feat": "node scripts/sync-env-feat.js"
+    "env:sync:feat": "node scripts/sync-env-feat.js",
+    "test:preview": "node scripts/test-preview-branch.js"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
