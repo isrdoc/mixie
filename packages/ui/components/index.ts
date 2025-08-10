@@ -1,8 +1,5 @@
-// Original components
-export * from "./header";
 export * from "./counter";
 
-// Basic shadcn/ui components that should work
 export * from "./avatar";
 export * from "./badge";
 export * from "./button";

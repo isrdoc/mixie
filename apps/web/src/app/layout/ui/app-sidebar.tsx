@@ -8,7 +8,7 @@ import {
   IconFileWord,
   IconFolder,
   IconHelp,
-  IconInnerShadowTop,
+  IconHeart,
   IconListDetails,
   IconReport,
   IconSearch,
@@ -159,7 +159,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="#">
-                <IconInnerShadowTop className="!size-5" />
+                <IconHeart className="!size-6 -ml-0.5 -mt-0.5" />
                 <span className="text-base font-semibold">Mixie</span>
               </a>
             </SidebarMenuButton>
