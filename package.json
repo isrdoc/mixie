@@ -12,10 +12,14 @@
     "db:stop": "supabase stop",
     "db:status": "supabase status",
     "db:reset": "supabase db reset",
-    "env:sync:feat": "node scripts/sync-env-feat.js"
+    "env:extract": "node scripts/extract-supabase-env.js",
+    "env:create-github": "node scripts/create-github-env-json.js",
+    "branch:create": "scripts/create-feature-branch.sh"
   },
   "devDependencies": {
+    "@playwright/test": "^1.54.2",
     "eslint": "^8.57.0",
+    "playwright": "^1.54.2",
     "prettier": "^3.2.5",
     "supabase": "^2.33.9",
     "turbo": "^2.5.5",
