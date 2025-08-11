@@ -2,13 +2,55 @@
 
 const { chromium } = require('playwright');
 const fs = require('fs');
+const { execSync } = require('child_process');
+
+// Get current git branch
+function getCurrentBranch() {
+  try {
+    return execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf8' }).trim();
+  } catch (error) {
+    console.warn('⚠️  Could not detect git branch, using default');
+    return 'unknown';
+  }
+}
 
 // Configuration
+const currentBranch = getCurrentBranch();
 const SUPABASE_PROJECT_REF = process.env.SUPABASE_PROJECT_REF || 'ubdnktdcobjijsppprte';
 const SUPABASE_DASHBOARD_URL = `https://supabase.com/dashboard/project/${SUPABASE_PROJECT_REF}`;
 
 async function extractSupabaseEnvVars() {
   console.log('🚀 Starting complete Supabase environment extraction...');
+  console.log(`🌿 Current git branch: ${currentBranch}`);
+  
+  // Check if we're on a feature branch
+  if (currentBranch.startsWith('feat/')) {
+    console.log('');
+    console.log('🎯 FEATURE BRANCH DETECTED!');
+    console.log('');
+    console.log('⚠️  IMPORTANT: Make sure you have the correct Supabase project selected!');
+    console.log('');
+    console.log('📋 Steps to verify:');
+    console.log('   1. Go to https://supabase.com/dashboard');
+    console.log(`   2. Look for a project named: ${currentBranch.replace('feat/', '')}`);
+    console.log('   3. Copy the project reference (short ID in URL)');
+    console.log('   4. Update the SUPABASE_PROJECT_REF environment variable');
+    console.log('');
+    console.log('💡 Example:');
+    console.log(`   export SUPABASE_PROJECT_REF=abc123def456`);
+    console.log(`   npm run env:extract`);
+    console.log('');
+    
+    if (!process.env.SUPABASE_PROJECT_REF) {
+      console.log('❌ No SUPABASE_PROJECT_REF provided for feature branch!');
+      console.log('');
+      console.log('🔧 Please set the project reference for your feature branch:');
+      console.log('   SUPABASE_PROJECT_REF=your-feature-project-ref npm run env:extract');
+      console.log('');
+      process.exit(1);
+    }
+  }
+  
   console.log(`📁 Target project: ${SUPABASE_PROJECT_REF}`);
   console.log(`🔗 Dashboard URL: ${SUPABASE_DASHBOARD_URL}`);
   

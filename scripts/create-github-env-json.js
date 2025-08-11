@@ -114,13 +114,15 @@ async function createGitHubEnvironmentJSON() {
       console.log("✅ JSON size is optimal for GitHub secrets");
     }
 
-    // Create local reference files
-    const branchEnvFile = `.env.${currentBranch.replace(/[^a-zA-Z0-9]/g, "-")}`;
+    // Create local reference JSON file for debugging (optional)
     const branchJsonFile = `.env.${currentBranch.replace(/[^a-zA-Z0-9]/g, "-")}.json`;
 
-    console.log(`📝 Creating local reference files...`);
-    fs.writeFileSync(branchEnvFile, envContent);
+    console.log(`📝 Creating JSON reference file for debugging...`);
     fs.writeFileSync(branchJsonFile, jsonConfig);
+    console.log(`📄 JSON config saved to: ${branchJsonFile}`);
+    console.log(`ℹ️  Note: This file is for reference only and can be deleted`);
+
+    // Note: We only work with .env.feat file, no branch-specific .env files created
 
     // Get GitHub repository info
     let repoInfo = "";

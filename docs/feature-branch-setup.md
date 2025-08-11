@@ -27,13 +27,11 @@ This will automatically:
 
 3. **Pull Request**: Creates a draft PR to trigger Supabase branch creation
 
-4. **Supabase Setup**: Waits for you to confirm the Supabase project is created
+4. **Environment Extraction**: Runs `npm run env:extract` with browser automation to get Supabase variables
 
-5. **Environment Extraction**: Runs `npm run env:extract` to get Supabase variables
+5. **GitHub Variables**: Runs `npm run env:create-github` to set up GitHub Actions
 
-6. **GitHub Variables**: Runs `npm run env:create-github` to set up GitHub Actions
-
-7. **Cleanup**: Removes temporary files and makes final commit
+6. **Cleanup**: Removes temporary files and makes final commit
 
 ### Prerequisites
 
@@ -60,9 +58,9 @@ This will automatically:
 During the setup process, you'll need to:
 
 1. **Pull Request**: The script automatically creates a draft PR which triggers Supabase branch creation
-2. **Supabase Project Creation**: When prompted, go to your Supabase dashboard and verify that a new project was created for your branch
-3. **Environment Variables**: The script will extract and configure environment variables automatically
-4. **Confirmation**: Press Enter when the Supabase project is ready
+2. **Environment Extraction**: During the extraction step, you'll log into Supabase and provide the project reference
+3. **Project Reference**: The script will prompt you for the Supabase project reference when needed
+4. **Automatic Configuration**: The script handles all GitHub Actions setup automatically
 
 ### Alternative Methods
 
