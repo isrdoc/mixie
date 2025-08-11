@@ -155,7 +155,6 @@ async function createGitHubEnvironmentJSON() {
       console.log(`4. Name: ${jsonVarName}`);
       console.log(`5. Value: ${compactJsonConfig}`);
       console.log("\n💾 Local files created for reference:");
-      console.log(`   ${branchEnvFile}`);
       console.log(`   ${branchJsonFile}`);
       return;
     }
@@ -196,7 +195,7 @@ async function createGitHubEnvironmentJSON() {
 
     console.log(`\n🎉 GitHub variable setup completed!`);
     console.log(`🔗 Variable name: ${jsonVarName}`);
-    console.log(`📁 Local files: ${branchEnvFile}, ${branchJsonFile}`);
+    console.log(`📁 Local reference file: ${branchJsonFile}`);
     if (repoInfo) {
       console.log(`📍 Repository: ${repoInfo}`);
     }
