@@ -34,30 +34,39 @@ jobs:
           echo "config_var=$CONFIG_VAR_NAME" >> $GITHUB_OUTPUT
           echo "Branch: $BRANCH_NAME → JSON Config Variable: $CONFIG_VAR_NAME"
 
-      - name: Load and parse Supabase configuration
-        id: config
-        run: |
-          # Get the JSON configuration from secrets using the dynamic variable name
-          CONFIG_JSON="${{ secrets[steps.branch.outputs.config_var] }}"
+    - name: Load and parse Supabase configuration
+      id: config
+      env:
+        # Pass all potential secrets as environment variables
+        FEAT_TEST_SUPABASE_BRANCH_SUPABASE_CONFIG: ${{ secrets.FEAT_TEST_SUPABASE_BRANCH_SUPABASE_CONFIG }}
+        # Add more branch configs as needed
+        # MAIN_SUPABASE_CONFIG: ${{ secrets.MAIN_SUPABASE_CONFIG }}
+        # FEAT_OTHER_BRANCH_SUPABASE_CONFIG: ${{ secrets.FEAT_OTHER_BRANCH_SUPABASE_CONFIG }}
+      run: |
+        # Get the JSON configuration from environment using the dynamic variable name
+        CONFIG_VAR_NAME="${{ steps.branch.outputs.config_var }}"
+        CONFIG_JSON=$(printenv "$CONFIG_VAR_NAME")
 
-          if [ -z "$CONFIG_JSON" ]; then
-            echo "❌ No JSON configuration found for branch: ${{ github.ref_name }}"
-            echo "Expected variable: ${{ steps.branch.outputs.config_var }}"
-            exit 1
-          fi
+        if [ -z "$CONFIG_JSON" ]; then
+          echo "❌ No JSON configuration found for branch: ${{ github.ref_name }}"
+          echo "Expected variable: ${{ steps.branch.outputs.config_var }}"
+          echo "Available environment variables:"
+          printenv | grep -E "_SUPABASE_CONFIG" || echo "No Supabase config variables found"
+          exit 1
+        fi
 
-          echo "✅ Found JSON configuration for branch: ${{ github.ref_name }}"
+        echo "✅ Found JSON configuration for branch: ${{ github.ref_name }}"
 
-          # Parse JSON and extract values (using jq for robust JSON parsing)
-          echo "supabase_url=$(echo '$CONFIG_JSON' | jq -r '.supabase.url')" >> $GITHUB_OUTPUT
-          echo "supabase_anon_key=$(echo '$CONFIG_JSON' | jq -r '.supabase.anonKey')" >> $GITHUB_OUTPUT
-          echo "supabase_service_role_key=$(echo '$CONFIG_JSON' | jq -r '.supabase.serviceRoleKey')" >> $GITHUB_OUTPUT
-          echo "supabase_jwt_secret=$(echo '$CONFIG_JSON' | jq -r '.supabase.jwtSecret')" >> $GITHUB_OUTPUT
-          echo "postgres_url=$(echo '$CONFIG_JSON' | jq -r '.database.url')" >> $GITHUB_OUTPUT
-          echo "postgres_host=$(echo '$CONFIG_JSON' | jq -r '.database.host')" >> $GITHUB_OUTPUT
-          echo "postgres_user=$(echo '$CONFIG_JSON' | jq -r '.database.user')" >> $GITHUB_OUTPUT
-          echo "postgres_password=$(echo '$CONFIG_JSON' | jq -r '.database.password')" >> $GITHUB_OUTPUT
-          echo "postgres_database=$(echo '$CONFIG_JSON' | jq -r '.database.database')" >> $GITHUB_OUTPUT
+        # Parse JSON and extract values (using jq for robust JSON parsing)
+        echo "supabase_url=$(echo '$CONFIG_JSON' | jq -r '.supabase.url')" >> $GITHUB_OUTPUT
+        echo "supabase_anon_key=$(echo '$CONFIG_JSON' | jq -r '.supabase.anonKey')" >> $GITHUB_OUTPUT
+        echo "supabase_service_role_key=$(echo '$CONFIG_JSON' | jq -r '.supabase.serviceRoleKey')" >> $GITHUB_OUTPUT
+        echo "supabase_jwt_secret=$(echo '$CONFIG_JSON' | jq -r '.supabase.jwtSecret')" >> $GITHUB_OUTPUT
+        echo "postgres_url=$(echo '$CONFIG_JSON' | jq -r '.database.url')" >> $GITHUB_OUTPUT
+        echo "postgres_host=$(echo '$CONFIG_JSON' | jq -r '.database.host')" >> $GITHUB_OUTPUT
+        echo "postgres_user=$(echo '$CONFIG_JSON' | jq -r '.database.user')" >> $GITHUB_OUTPUT
+        echo "postgres_password=$(echo '$CONFIG_JSON' | jq -r '.database.password')" >> $GITHUB_OUTPUT
+        echo "postgres_database=$(echo '$CONFIG_JSON' | jq -r '.database.database')" >> $GITHUB_OUTPUT
 
       - name: Build application
         env:
