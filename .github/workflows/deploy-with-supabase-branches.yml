@@ -56,6 +56,20 @@ jobs:
           fi
 
           echo "✅ Found JSON configuration for branch: ${{ github.ref_name }}"
+          
+          # Debug: Show first 100 characters of JSON (without sensitive data)
+          echo "📋 JSON preview (first 100 chars): ${CONFIG_JSON:0:100}"
+          echo "📏 JSON length: ${#CONFIG_JSON}"
+          
+          # Test if JSON is valid by trying to parse it with jq first
+          echo "🔍 Testing JSON validity..."
+          if echo "$CONFIG_JSON" | jq . > /dev/null 2>&1; then
+            echo "✅ JSON is valid"
+          else
+            echo "❌ JSON is invalid - showing raw content:"
+            echo "$CONFIG_JSON" | hexdump -C | head -5
+            exit 1
+          fi
 
           # Parse JSON and extract values (using jq for robust JSON parsing)
           echo "supabase_url=$(echo '$CONFIG_JSON' | jq -r '.supabase.url')" >> $GITHUB_OUTPUT
