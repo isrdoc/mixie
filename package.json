@@ -13,7 +13,8 @@
     "db:status": "supabase status",
     "db:reset": "supabase db reset",
     "env:extract": "node scripts/extract-supabase-env.js",
-    "env:create-github": "node scripts/create-github-env-json.js"
+    "env:create-github": "node scripts/create-github-env-json.js",
+    "branch:create": "scripts/create-feature-branch.sh"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",
