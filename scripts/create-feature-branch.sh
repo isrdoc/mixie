@@ -102,31 +102,10 @@ print_success "Feature branch created and checked out"
 
 # Step 5: Create initial commit to trigger Supabase branch creation
 print_step "Creating initial commit to trigger Supabase branch creation..."
-# Create a temporary file to ensure we have something to commit
-mkdir -p .feature-setup
-echo "# Feature Branch: $FEATURE_BRANCH
-
-This branch was created on $(date) for feature development.
-
-## Supabase Environment
-- Branch-specific Supabase project will be created automatically
-- Database isolation for this feature development
-- Environment variables configured via GitHub Actions
-
-## Next Steps
-1. Develop your feature
-2. Test with branch-specific database
-3. Create pull request when ready
-
----
-*This file can be removed once development begins*
-" > .feature-setup/branch-info.md
-
-git add .feature-setup/branch-info.md
-git commit -m "chore: setup feature branch
+git commit --allow-empty -m "chore: setup feature branch
 
 🌟 Feature branch setup:
-- Created branch-specific development environment
+- Created branch-specific development environment  
 - Triggering automatic Supabase project creation
 - Setting up database isolation for feature development
 
@@ -233,17 +212,7 @@ else
     print_info "E2E tests completed with warnings or not available"
 fi
 
-# Step 11: Clean up initial setup files
-print_step "Cleaning up setup files..."
-rm -rf .feature-setup
-git add -A
-git commit -m "cleanup: remove initial setup files
-
-Environment setup completed successfully"
-git push
-print_success "Setup files cleaned up"
-
-# Step 12: Success summary
+# Step 11: Success summary
 echo ""
 print_success "🎉 Feature branch setup completed successfully!"
 echo ""
