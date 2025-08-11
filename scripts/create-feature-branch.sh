@@ -176,17 +176,10 @@ if gh pr create --title "$PR_TITLE" --body "$PR_BODY" --base dev --head "$FEATUR
     PR_URL=$(gh pr view --json url --jq '.url')
     print_info "PR URL: $PR_URL"
     
-    print_step "Waiting for Supabase branch creation..."
-    print_info "The PR creation will trigger Supabase to create a branch-specific project"
-    print_info "This may take a few moments..."
-    echo ""
-    print_warning "Please check your Supabase dashboard and GitHub Actions:"
-    print_warning "1. Verify that a new Supabase project was created for branch: $BRANCH_NAME"
-    print_warning "2. Check GitHub Actions workflow is running"
-    print_warning "3. Note down the Supabase project URL and keys when ready"
-    print_warning "4. Press Enter when the Supabase project is ready"
-    echo ""
-    read -p "Press Enter when Supabase branch project is ready..."
+    print_step "PR created - Supabase branch setup initiated..."
+    print_info "The PR creation triggers Supabase to create a branch-specific project"
+    print_info "You'll specify the project reference during environment extraction"
+    print_success "Continuing with setup process..."
 else
     print_error "Failed to create Pull Request"
     print_info "You can create it manually later with:"
@@ -205,6 +198,7 @@ if [ ! -f "scripts/extract-supabase-env.js" ]; then
 fi
 
 print_info "Running: npm run env:extract"
+print_info "You'll be prompted to provide the Supabase project reference during extraction"
 if npm run env:extract; then
     print_success "Supabase environment variables extracted"
 else
