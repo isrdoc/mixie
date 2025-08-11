@@ -74,15 +74,15 @@ if [ ! -f "package.json" ] || [ ! -d ".git" ]; then
 fi
 print_success "Project directory confirmed"
 
-# Step 2: Check if develop branch exists and switch to it
-print_step "Switching to develop branch..."
-if ! git rev-parse --verify develop >/dev/null 2>&1; then
-    print_warning "Develop branch not found, using main branch instead"
+# Step 2: Check if dev branch exists and switch to it
+print_step "Switching to dev branch..."
+if ! git rev-parse --verify dev >/dev/null 2>&1; then
+    print_warning "Dev branch not found, using main branch instead"
     git checkout main
     git pull origin main
 else
-    git checkout develop
-    git pull origin develop
+    git checkout dev
+    git pull origin dev
 fi
 print_success "Base branch updated"
 

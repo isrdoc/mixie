@@ -20,7 +20,7 @@ This will automatically:
 
 ### What the Script Does
 
-1. **Branch Creation**: Creates `feat/BRANCH_NAME` from the `develop` branch (or `main` if `develop` doesn't exist)
+1. **Branch Creation**: Creates `feat/BRANCH_NAME` from the `dev` branch (or `main` if `dev` doesn't exist)
 
 2. **Initial Commit**: Creates and pushes an initial commit to trigger Supabase branch creation
 
@@ -66,8 +66,8 @@ If you prefer to run the individual steps manually:
 
 ```bash
 # Create branch manually
-git checkout develop
-git pull origin develop
+git checkout dev
+git pull origin dev
 git checkout -b feat/your-feature-name
 
 # Extract Supabase environment

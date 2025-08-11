@@ -14,7 +14,7 @@ if [ -z "$1" ]; then
     echo "  $0 music-recommendations"
     echo ""
     echo "This will:"
-    echo "  ✅ Create feat/BRANCH_NAME from develop"
+    echo "  ✅ Create feat/BRANCH_NAME from dev"
     echo "  ✅ Set up Supabase branch environment"
     echo "  ✅ Configure GitHub Actions variables"
     echo "  ✅ Push initial commit to trigger setup"
