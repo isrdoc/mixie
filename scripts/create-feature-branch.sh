@@ -197,13 +197,13 @@ if [ ! -f "scripts/extract-supabase-env.js" ]; then
     exit 1
 fi
 
-print_info "Running: npm run env:extract"
+print_info "Running: pnpm run env:extract"
 print_info "You'll be prompted to provide the Supabase project reference during extraction"
-if npm run env:extract; then
+if pnpm run env:extract; then
     print_success "Supabase environment variables extracted"
 else
     print_warning "Supabase extraction had issues, but continuing..."
-    print_info "You may need to run 'npm run env:extract' manually later"
+    print_info "You may need to run 'pnpm run env:extract' manually later"
 fi
 
 # Step 9: Create GitHub environment variables
@@ -213,21 +213,21 @@ if [ ! -f "scripts/create-github-env-json.js" ]; then
     exit 1
 fi
 
-print_info "Running: npm run env:create-github"
-if npm run env:create-github; then
+print_info "Running: pnpm run env:create-github"
+if pnpm run env:create-github; then
     print_success "GitHub environment variables created"
 else
     print_error "Failed to create GitHub environment variables"
     print_info "You may need to:"
     print_info "1. Check your GitHub CLI authentication: gh auth status"
-    print_info "2. Run manually: npm run env:create-github"
+    print_info "2. Run manually: pnpm run env:create-github"
     exit 1
 fi
 
 # Step 10: Run end-to-end tests with branch-specific environment
 print_step "Running end-to-end tests with branch-specific environment..."
 print_info "Testing the complete setup with isolated database"
-if npm run test:e2e 2>/dev/null || npm run test 2>/dev/null || npm run e2e 2>/dev/null; then
+if pnpm run test:e2e 2>/dev/null || pnpm run test 2>/dev/null || pnpm run e2e 2>/dev/null; then
     print_success "End-to-end tests completed successfully"
 else
     print_info "E2E tests completed with warnings or not available"
@@ -272,6 +272,6 @@ echo -e "${YELLOW}View environment variables:${NC}"
 echo "  gh variable list"
 echo ""
 echo -e "${YELLOW}Test local development:${NC}"
-echo "  npm run dev"
+echo "  pnpm run dev"
 echo ""
 print_success "Happy coding! 🚀"
