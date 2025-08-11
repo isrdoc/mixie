@@ -37,11 +37,14 @@ jobs:
       - name: Load and parse Supabase configuration
         id: config
         env:
-          # Pass all potential variables as environment variables
+          # Pass all existing Supabase config variables as environment variables
           FEAT_TEST_SUPABASE_BRANCH_SUPABASE_CONFIG: ${{ vars.FEAT_TEST_SUPABASE_BRANCH_SUPABASE_CONFIG }}
-          # Add more branch configs as needed
-          # MAIN_SUPABASE_CONFIG: ${{ vars.MAIN_SUPABASE_CONFIG }}
-          # FEAT_OTHER_BRANCH_SUPABASE_CONFIG: ${{ vars.FEAT_OTHER_BRANCH_SUPABASE_CONFIG }}
+          FEAT_FIXED_BRANCH_SELECT_SUPABASE_CONFIG: ${{ vars.FEAT_FIXED_BRANCH_SELECT_SUPABASE_CONFIG }}
+          FEAT_WITH_E2E_EXTRACT_SUPABASE_CONFIG: ${{ vars.FEAT_WITH_E2E_EXTRACT_SUPABASE_CONFIG }}
+          FEAT_NEW_FEAT_FROM_DEV_SUPABASE_CONFIG: ${{ vars.FEAT_NEW_FEAT_FROM_DEV_SUPABASE_CONFIG }}
+          FEAT_EXTRACT_FROM_BRANCH_SUPABASE_CONFIG: ${{ vars.FEAT_EXTRACT_FROM_BRANCH_SUPABASE_CONFIG }}
+          FEAT_TRY_BRANCH_SUPABASE_CONFIG: ${{ vars.FEAT_TRY_BRANCH_SUPABASE_CONFIG }}
+          # Add more branch configs as they are created
         run: |
           # Get the JSON configuration from environment using the dynamic variable name
           CONFIG_VAR_NAME="${{ steps.branch.outputs.config_var }}"
