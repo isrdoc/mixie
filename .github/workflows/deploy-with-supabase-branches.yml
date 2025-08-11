@@ -34,85 +34,85 @@ jobs:
           echo "config_var=$CONFIG_VAR_NAME" >> $GITHUB_OUTPUT
           echo "Branch: $BRANCH_NAME → JSON Config Variable: $CONFIG_VAR_NAME"
 
-    - name: Load and parse Supabase configuration
-      id: config
-      env:
-        # Pass all potential secrets as environment variables
-        FEAT_TEST_SUPABASE_BRANCH_SUPABASE_CONFIG: ${{ secrets.FEAT_TEST_SUPABASE_BRANCH_SUPABASE_CONFIG }}
-        # Add more branch configs as needed
-        # MAIN_SUPABASE_CONFIG: ${{ secrets.MAIN_SUPABASE_CONFIG }}
-        # FEAT_OTHER_BRANCH_SUPABASE_CONFIG: ${{ secrets.FEAT_OTHER_BRANCH_SUPABASE_CONFIG }}
-      run: |
-        # Get the JSON configuration from environment using the dynamic variable name
-        CONFIG_VAR_NAME="${{ steps.branch.outputs.config_var }}"
-        CONFIG_JSON=$(printenv "$CONFIG_VAR_NAME")
+      - name: Load and parse Supabase configuration
+        id: config
+        env:
+          # Pass all potential secrets as environment variables
+          FEAT_TEST_SUPABASE_BRANCH_SUPABASE_CONFIG: ${{ secrets.FEAT_TEST_SUPABASE_BRANCH_SUPABASE_CONFIG }}
+          # Add more branch configs as needed
+          # MAIN_SUPABASE_CONFIG: ${{ secrets.MAIN_SUPABASE_CONFIG }}
+          # FEAT_OTHER_BRANCH_SUPABASE_CONFIG: ${{ secrets.FEAT_OTHER_BRANCH_SUPABASE_CONFIG }}
+        run: |
+          # Get the JSON configuration from environment using the dynamic variable name
+          CONFIG_VAR_NAME="${{ steps.branch.outputs.config_var }}"
+          CONFIG_JSON=$(printenv "$CONFIG_VAR_NAME")
 
-        if [ -z "$CONFIG_JSON" ]; then
-          echo "❌ No JSON configuration found for branch: ${{ github.ref_name }}"
-          echo "Expected variable: ${{ steps.branch.outputs.config_var }}"
-          echo "Available environment variables:"
-          printenv | grep -E "_SUPABASE_CONFIG" || echo "No Supabase config variables found"
-          exit 1
-        fi
+          if [ -z "$CONFIG_JSON" ]; then
+            echo "❌ No JSON configuration found for branch: ${{ github.ref_name }}"
+            echo "Expected variable: ${{ steps.branch.outputs.config_var }}"
+            echo "Available environment variables:"
+            printenv | grep -E "_SUPABASE_CONFIG" || echo "No Supabase config variables found"
+            exit 1
+          fi
 
-        echo "✅ Found JSON configuration for branch: ${{ github.ref_name }}"
+          echo "✅ Found JSON configuration for branch: ${{ github.ref_name }}"
 
-        # Parse JSON and extract values (using jq for robust JSON parsing)
-        echo "supabase_url=$(echo '$CONFIG_JSON' | jq -r '.supabase.url')" >> $GITHUB_OUTPUT
-        echo "supabase_anon_key=$(echo '$CONFIG_JSON' | jq -r '.supabase.anonKey')" >> $GITHUB_OUTPUT
-        echo "supabase_service_role_key=$(echo '$CONFIG_JSON' | jq -r '.supabase.serviceRoleKey')" >> $GITHUB_OUTPUT
-        echo "supabase_jwt_secret=$(echo '$CONFIG_JSON' | jq -r '.supabase.jwtSecret')" >> $GITHUB_OUTPUT
-        echo "postgres_url=$(echo '$CONFIG_JSON' | jq -r '.database.url')" >> $GITHUB_OUTPUT
-        echo "postgres_host=$(echo '$CONFIG_JSON' | jq -r '.database.host')" >> $GITHUB_OUTPUT
-        echo "postgres_user=$(echo '$CONFIG_JSON' | jq -r '.database.user')" >> $GITHUB_OUTPUT
-        echo "postgres_password=$(echo '$CONFIG_JSON' | jq -r '.database.password')" >> $GITHUB_OUTPUT
-        echo "postgres_database=$(echo '$CONFIG_JSON' | jq -r '.database.database')" >> $GITHUB_OUTPUT
+          # Parse JSON and extract values (using jq for robust JSON parsing)
+          echo "supabase_url=$(echo '$CONFIG_JSON' | jq -r '.supabase.url')" >> $GITHUB_OUTPUT
+          echo "supabase_anon_key=$(echo '$CONFIG_JSON' | jq -r '.supabase.anonKey')" >> $GITHUB_OUTPUT
+          echo "supabase_service_role_key=$(echo '$CONFIG_JSON' | jq -r '.supabase.serviceRoleKey')" >> $GITHUB_OUTPUT
+          echo "supabase_jwt_secret=$(echo '$CONFIG_JSON' | jq -r '.supabase.jwtSecret')" >> $GITHUB_OUTPUT
+          echo "postgres_url=$(echo '$CONFIG_JSON' | jq -r '.database.url')" >> $GITHUB_OUTPUT
+          echo "postgres_host=$(echo '$CONFIG_JSON' | jq -r '.database.host')" >> $GITHUB_OUTPUT
+          echo "postgres_user=$(echo '$CONFIG_JSON' | jq -r '.database.user')" >> $GITHUB_OUTPUT
+          echo "postgres_password=$(echo '$CONFIG_JSON' | jq -r '.database.password')" >> $GITHUB_OUTPUT
+          echo "postgres_database=$(echo '$CONFIG_JSON' | jq -r '.database.database')" >> $GITHUB_OUTPUT
 
-    - name: Build application
-      env:
-        # Use the parsed values from JSON config
-        VITE_SUPABASE_URL: ${{ steps.config.outputs.supabase_url }}
-        VITE_SUPABASE_ANON_KEY: ${{ steps.config.outputs.supabase_anon_key }}
-        SUPABASE_URL: ${{ steps.config.outputs.supabase_url }}
-        SUPABASE_ANON_KEY: ${{ steps.config.outputs.supabase_anon_key }}
-        SUPABASE_SERVICE_ROLE_KEY: ${{ steps.config.outputs.supabase_service_role_key }}
-        SUPABASE_JWT_SECRET: ${{ steps.config.outputs.supabase_jwt_secret }}
-        POSTGRES_HOST: ${{ steps.config.outputs.postgres_host }}
-        POSTGRES_USER: ${{ steps.config.outputs.postgres_user }}
-        POSTGRES_PASSWORD: ${{ steps.config.outputs.postgres_password }}
-        POSTGRES_DATABASE: ${{ steps.config.outputs.postgres_database }}
-        POSTGRES_URL: ${{ steps.config.outputs.postgres_url }}
-      run: |
-        echo "🏗️ Building with branch-specific Supabase environment"
-        echo "Using JSON config variable: ${{ steps.branch.outputs.config_var }}"
-        pnpm run build
+      - name: Build application
+        env:
+          # Use the parsed values from JSON config
+          VITE_SUPABASE_URL: ${{ steps.config.outputs.supabase_url }}
+          VITE_SUPABASE_ANON_KEY: ${{ steps.config.outputs.supabase_anon_key }}
+          SUPABASE_URL: ${{ steps.config.outputs.supabase_url }}
+          SUPABASE_ANON_KEY: ${{ steps.config.outputs.supabase_anon_key }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ steps.config.outputs.supabase_service_role_key }}
+          SUPABASE_JWT_SECRET: ${{ steps.config.outputs.supabase_jwt_secret }}
+          POSTGRES_HOST: ${{ steps.config.outputs.postgres_host }}
+          POSTGRES_USER: ${{ steps.config.outputs.postgres_user }}
+          POSTGRES_PASSWORD: ${{ steps.config.outputs.postgres_password }}
+          POSTGRES_DATABASE: ${{ steps.config.outputs.postgres_database }}
+          POSTGRES_URL: ${{ steps.config.outputs.postgres_url }}
+        run: |
+          echo "🏗️ Building with branch-specific Supabase environment"
+          echo "Using JSON config variable: ${{ steps.branch.outputs.config_var }}"
+          pnpm run build
 
-    - name: Deploy to Vercel
-      uses: amondnet/vercel-action@v25
-      with:
-        vercel-token: ${{ secrets.VERCEL_TOKEN }}
-        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-        working-directory: ./
-        scope: ${{ secrets.VERCEL_ORG_ID }}
-      env:
-        # Pass parsed individual values
-        VITE_SUPABASE_URL: ${{ steps.config.outputs.supabase_url }}
-        VITE_SUPABASE_ANON_KEY: ${{ steps.config.outputs.supabase_anon_key }}
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+        env:
+          # Pass parsed individual values
+          VITE_SUPABASE_URL: ${{ steps.config.outputs.supabase_url }}
+          VITE_SUPABASE_ANON_KEY: ${{ steps.config.outputs.supabase_anon_key }}
 
-    - name: Run tests with branch-specific database
-      env:
-        POSTGRES_URL: ${{ steps.config.outputs.postgres_url }}
-        SUPABASE_SERVICE_ROLE_KEY: ${{ steps.config.outputs.supabase_service_role_key }}
-      run: |
-        echo "🧪 Running tests against branch-specific Supabase environment"
-        # pnpm test
+      - name: Run tests with branch-specific database
+        env:
+          POSTGRES_URL: ${{ steps.config.outputs.postgres_url }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ steps.config.outputs.supabase_service_role_key }}
+        run: |
+          echo "🧪 Running tests against branch-specific Supabase environment"
+          # pnpm test
 
-    - name: Debug configuration (optional)
-      run: |
-        echo "✅ Successfully loaded JSON configuration"
-        echo "Branch: ${{ github.ref_name }}"
-        echo "Config variable: ${{ steps.branch.outputs.config_var }}"
-        echo "Supabase URL: ${{ steps.config.outputs.supabase_url }}"
-        echo "Database host: ${{ steps.config.outputs.postgres_host }}"
-        # Don't echo sensitive values like passwords or keys!
+      - name: Debug configuration (optional)
+        run: |
+          echo "✅ Successfully loaded JSON configuration"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Config variable: ${{ steps.branch.outputs.config_var }}"
+          echo "Supabase URL: ${{ steps.config.outputs.supabase_url }}"
+          echo "Database host: ${{ steps.config.outputs.postgres_host }}"
+          # Don't echo sensitive values like passwords or keys!
