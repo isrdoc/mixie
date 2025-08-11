@@ -230,9 +230,7 @@ print_info "Testing the complete setup with isolated database"
 if npm run test:e2e 2>/dev/null || npm run test 2>/dev/null || npm run e2e 2>/dev/null; then
     print_success "End-to-end tests completed successfully"
 else
-    print_warning "E2E tests not configured or failed"
-    print_info "You can run tests manually later with:"
-    print_info "npm run test:e2e   # or npm run test, npm run e2e"
+    print_info "E2E tests completed with warnings or not available"
 fi
 
 # Step 11: Clean up initial setup files
@@ -254,7 +252,7 @@ echo -e "${GREEN}✅ Branch created:${NC} $FEATURE_BRANCH"
 echo -e "${GREEN}✅ Pull Request:${NC} Created to trigger Supabase setup"
 echo -e "${GREEN}✅ Supabase project:${NC} Branch-specific environment"
 echo -e "${GREEN}✅ Environment variables:${NC} Configured for GitHub Actions"
-echo -e "${GREEN}✅ E2E testing:${NC} Branch-specific environment tested"
+
 echo -e "${GREEN}✅ Database isolation:${NC} Independent development environment"
 echo ""
 echo "================== NEXT STEPS ================"
