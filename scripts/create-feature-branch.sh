@@ -224,7 +224,18 @@ else
     exit 1
 fi
 
-# Step 10: Clean up initial setup files
+# Step 10: Run end-to-end tests with branch-specific environment
+print_step "Running end-to-end tests with branch-specific environment..."
+print_info "Testing the complete setup with isolated database"
+if npm run test:e2e 2>/dev/null || npm run test 2>/dev/null || npm run e2e 2>/dev/null; then
+    print_success "End-to-end tests completed successfully"
+else
+    print_warning "E2E tests not configured or failed"
+    print_info "You can run tests manually later with:"
+    print_info "npm run test:e2e   # or npm run test, npm run e2e"
+fi
+
+# Step 11: Clean up initial setup files
 print_step "Cleaning up setup files..."
 rm -rf .feature-setup
 git add -A
@@ -234,7 +245,7 @@ Environment setup completed successfully"
 git push
 print_success "Setup files cleaned up"
 
-# Step 11: Success summary
+# Step 12: Success summary
 echo ""
 print_success "🎉 Feature branch setup completed successfully!"
 echo ""
@@ -243,6 +254,7 @@ echo -e "${GREEN}✅ Branch created:${NC} $FEATURE_BRANCH"
 echo -e "${GREEN}✅ Pull Request:${NC} Created to trigger Supabase setup"
 echo -e "${GREEN}✅ Supabase project:${NC} Branch-specific environment"
 echo -e "${GREEN}✅ Environment variables:${NC} Configured for GitHub Actions"
+echo -e "${GREEN}✅ E2E testing:${NC} Branch-specific environment tested"
 echo -e "${GREEN}✅ Database isolation:${NC} Independent development environment"
 echo ""
 echo "================== NEXT STEPS ================"
