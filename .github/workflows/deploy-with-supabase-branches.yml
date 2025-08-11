@@ -2,9 +2,7 @@ name: Deploy with Branch-Specific Supabase Environment
 
 on:
   push:
-    branches: [main, "feat/**"]
-  pull_request:
-    branches: [main]
+    branches: ["feat/**"]
 
 jobs:
   deploy:
