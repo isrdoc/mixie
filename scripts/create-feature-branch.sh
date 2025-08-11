@@ -203,7 +203,53 @@ else
     exit 1
 fi
 
-# Step 10: Run end-to-end tests with branch-specific environment
+# Step 10: Update workflow and commit to enable deployment
+print_step "Updating GitHub Actions workflow to enable deployment..."
+print_info "Adding branch-specific config variable to workflow"
+
+# Generate the sanitized branch name for the config variable
+SANITIZED_BRANCH=$(echo "$FEATURE_BRANCH" | sed 's/[^a-zA-Z0-9]/_/g' | tr '[:lower:]' '[:upper:]')
+NEW_CONFIG_VAR="${SANITIZED_BRANCH}_SUPABASE_CONFIG"
+
+# Update the workflow file
+WORKFLOW_FILE=".github/workflows/deploy-with-supabase-branches.yml"
+if [ ! -f "$WORKFLOW_FILE" ]; then
+    print_error "Workflow file not found: $WORKFLOW_FILE"
+    exit 1
+fi
+
+# Replace the env section in the workflow to only include our new config variable
+print_info "Updating workflow to use: $NEW_CONFIG_VAR"
+sed -i.bak '/# Pass all existing Supabase config variables/,/# Add more branch configs as they are created/ {
+    /# Pass all existing Supabase config variables/!{
+        /# Add more branch configs as they are created/!d
+    }
+}' "$WORKFLOW_FILE"
+
+# Add our new config variable
+sed -i.bak '/# Pass all existing Supabase config variables/a\
+          '"$NEW_CONFIG_VAR"': ${{ vars.'"$NEW_CONFIG_VAR"' }}\
+          # Add more branch configs as they are created' "$WORKFLOW_FILE"
+
+# Remove backup file
+rm -f "${WORKFLOW_FILE}.bak"
+
+# Commit the workflow changes
+git add "$WORKFLOW_FILE"
+git commit -m "chore: deploy feature branch
+
+🚀 Enable deployment with branch-specific Supabase environment:
+- Added $NEW_CONFIG_VAR to GitHub Actions workflow
+- Workflow can now access branch-specific environment variables
+- Ready for automated deployment and testing
+
+Branch: $FEATURE_BRANCH
+Config: $NEW_CONFIG_VAR"
+
+git push
+print_success "Workflow updated and deployment enabled"
+
+# Step 11: Run end-to-end tests with branch-specific environment
 print_step "Running end-to-end tests with branch-specific environment..."
 print_info "Testing the complete setup with isolated database"
 if pnpm run test:e2e 2>/dev/null || pnpm run test 2>/dev/null || pnpm run e2e 2>/dev/null; then
@@ -212,7 +258,7 @@ else
     print_info "E2E tests completed with warnings or not available"
 fi
 
-# Step 11: Success summary
+# Step 12: Success summary
 echo ""
 print_success "🎉 Feature branch setup completed successfully!"
 echo ""
