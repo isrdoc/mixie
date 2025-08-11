@@ -123,7 +123,7 @@ This branch was created on $(date) for feature development.
 " > .feature-setup/branch-info.md
 
 git add .feature-setup/branch-info.md
-git commit -m "feat: initialize $FEATURE_BRANCH
+git commit -m "chore: setup feature branch
 
 🌟 Feature branch setup:
 - Created branch-specific development environment
@@ -142,7 +142,7 @@ print_success "Feature branch pushed to GitHub"
 
 # Step 7: Create Pull Request to trigger Supabase branch creation
 print_step "Creating Pull Request to trigger Supabase branch creation..."
-PR_TITLE="feat: $BRANCH_NAME - initial setup"
+PR_TITLE="feat: $BRANCH_NAME"
 PR_BODY="## 🚀 Feature Branch: $FEATURE_BRANCH
 
 This pull request sets up the initial development environment for the **$BRANCH_NAME** feature.
