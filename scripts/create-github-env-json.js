@@ -90,11 +90,20 @@ async function createGitHubEnvironmentJSON() {
       },
     };
 
-    // Convert to JSON string
+    // Convert to JSON string and validate it
     const jsonConfig = JSON.stringify(config, null, 2);
     const compactJsonConfig = JSON.stringify(config);
 
-    console.log(`📏 JSON size: ${compactJsonConfig.length} bytes`);
+    // Validate JSON by parsing it back
+    try {
+      JSON.parse(compactJsonConfig);
+      console.log(`📏 JSON size: ${compactJsonConfig.length} bytes`);
+      console.log("✅ JSON validation successful");
+    } catch (error) {
+      console.error("❌ JSON validation failed:", error.message);
+      console.log("Problematic JSON:", compactJsonConfig.substring(0, 200));
+      throw new Error("Generated JSON is invalid");
+    }
 
     // Check if it fits within reasonable limits (GitHub secrets have 64KB limit)
     if (compactJsonConfig.length > 4000) {
@@ -149,8 +158,8 @@ async function createGitHubEnvironmentJSON() {
       return;
     }
 
-    // Create GitHub secret using GitHub CLI
-    console.log(`🚀 Setting GitHub secret using GitHub CLI...`);
+    // Create GitHub variable using GitHub CLI
+    console.log(`🚀 Setting GitHub variable using GitHub CLI...`);
 
     try {
       // Write JSON to a temporary file to avoid command line length limits
@@ -158,27 +167,27 @@ async function createGitHubEnvironmentJSON() {
       fs.writeFileSync(tempFile, compactJsonConfig);
 
       try {
-        const createCmd = `gh secret set ${jsonVarName} < ${tempFile}`;
+        const createCmd = `gh variable set ${jsonVarName} < ${tempFile}`;
         execSync(createCmd, { stdio: "pipe" });
-        console.log(`✅ ${jsonVarName} created/updated successfully in GitHub`);
+        console.log(`✅ ${jsonVarName} created/updated successfully in GitHub Variables`);
       } finally {
         // Clean up temp file
         if (fs.existsSync(tempFile)) {
           fs.unlinkSync(tempFile);
         }
       }
-    } catch (secretError) {
-      console.log(`⚠️  Failed to set GitHub secret: ${secretError.message}`);
+    } catch (variableError) {
+      console.log(`⚠️  Failed to set GitHub variable: ${variableError.message}`);
       console.log("\n📋 Manual setup required:");
       console.log("1. Go to your GitHub repository settings");
-      console.log("2. Navigate to Secrets and variables → Actions");
-      console.log('3. Click "New repository secret"');
+      console.log("2. Navigate to Secrets and variables → Actions → Variables tab");
+      console.log('3. Click "New repository variable"');
       console.log(`4. Name: ${jsonVarName}`);
       console.log(`5. Value: ${compactJsonConfig}`);
     }
 
-    console.log(`\n🎉 GitHub secret setup completed!`);
-    console.log(`🔗 Secret name: ${jsonVarName}`);
+    console.log(`\n🎉 GitHub variable setup completed!`);
+    console.log(`🔗 Variable name: ${jsonVarName}`);
     console.log(`📁 Local files: ${branchEnvFile}, ${branchJsonFile}`);
     if (repoInfo) {
       console.log(`📍 Repository: ${repoInfo}`);
@@ -223,11 +232,11 @@ async function createGitHubEnvironmentJSON() {
 if (require.main === module) {
   createGitHubEnvironmentJSON()
     .then(() => {
-      console.log("✅ GitHub secret creation completed!");
+      console.log("✅ GitHub variable creation completed!");
       process.exit(0);
     })
     .catch((error) => {
-      console.error("💥 GitHub secret creation failed:", error.message);
+      console.error("💥 GitHub variable creation failed:", error.message);
       process.exit(1);
     });
 }
