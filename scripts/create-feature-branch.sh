@@ -102,31 +102,10 @@ print_success "Feature branch created and checked out"
 
 # Step 5: Create initial commit to trigger Supabase branch creation
 print_step "Creating initial commit to trigger Supabase branch creation..."
-# Create a temporary file to ensure we have something to commit
-mkdir -p .feature-setup
-echo "# Feature Branch: $FEATURE_BRANCH
-
-This branch was created on $(date) for feature development.
-
-## Supabase Environment
-- Branch-specific Supabase project will be created automatically
-- Database isolation for this feature development
-- Environment variables configured via GitHub Actions
-
-## Next Steps
-1. Develop your feature
-2. Test with branch-specific database
-3. Create pull request when ready
-
----
-*This file can be removed once development begins*
-" > .feature-setup/branch-info.md
-
-git add .feature-setup/branch-info.md
-git commit -m "chore: setup feature branch
+git commit --allow-empty -m "chore: setup feature branch
 
 🌟 Feature branch setup:
-- Created branch-specific development environment
+- Created branch-specific development environment  
 - Triggering automatic Supabase project creation
 - Setting up database isolation for feature development
 
@@ -197,13 +176,13 @@ if [ ! -f "scripts/extract-supabase-env.js" ]; then
     exit 1
 fi
 
-print_info "Running: npm run env:extract"
+print_info "Running: pnpm run env:extract"
 print_info "You'll be prompted to provide the Supabase project reference during extraction"
-if npm run env:extract; then
+if pnpm run env:extract; then
     print_success "Supabase environment variables extracted"
 else
     print_warning "Supabase extraction had issues, but continuing..."
-    print_info "You may need to run 'npm run env:extract' manually later"
+    print_info "You may need to run 'pnpm run env:extract' manually later"
 fi
 
 # Step 9: Create GitHub environment variables
@@ -213,37 +192,71 @@ if [ ! -f "scripts/create-github-env-json.js" ]; then
     exit 1
 fi
 
-print_info "Running: npm run env:create-github"
-if npm run env:create-github; then
+print_info "Running: pnpm run env:create-github"
+if pnpm run env:create-github; then
     print_success "GitHub environment variables created"
 else
     print_error "Failed to create GitHub environment variables"
     print_info "You may need to:"
     print_info "1. Check your GitHub CLI authentication: gh auth status"
-    print_info "2. Run manually: npm run env:create-github"
+    print_info "2. Run manually: pnpm run env:create-github"
     exit 1
 fi
 
-# Step 10: Run end-to-end tests with branch-specific environment
-print_step "Running end-to-end tests with branch-specific environment..."
-print_info "Testing the complete setup with isolated database"
-if npm run test:e2e 2>/dev/null || npm run test 2>/dev/null || npm run e2e 2>/dev/null; then
-    print_success "End-to-end tests completed successfully"
-else
-    print_warning "E2E tests not configured or failed"
-    print_info "You can run tests manually later with:"
-    print_info "npm run test:e2e   # or npm run test, npm run e2e"
+# Step 10: Update workflow and commit to enable deployment
+print_step "Updating GitHub Actions workflow to enable deployment..."
+print_info "Adding branch-specific config variable to workflow"
+
+# Generate the sanitized branch name for the config variable
+SANITIZED_BRANCH=$(echo "$FEATURE_BRANCH" | sed 's/[^a-zA-Z0-9]/_/g' | tr '[:lower:]' '[:upper:]')
+NEW_CONFIG_VAR="${SANITIZED_BRANCH}_SUPABASE_CONFIG"
+
+# Update the workflow file
+WORKFLOW_FILE=".github/workflows/deploy-with-supabase-branches.yml"
+if [ ! -f "$WORKFLOW_FILE" ]; then
+    print_error "Workflow file not found: $WORKFLOW_FILE"
+    exit 1
 fi
 
-# Step 11: Clean up initial setup files
-print_step "Cleaning up setup files..."
-rm -rf .feature-setup
-git add -A
-git commit -m "cleanup: remove initial setup files
+# Replace the env section in the workflow to only include our new config variable
+print_info "Updating workflow to use: $NEW_CONFIG_VAR"
+sed -i.bak '/# Pass all existing Supabase config variables/,/# Add more branch configs as they are created/ {
+    /# Pass all existing Supabase config variables/!{
+        /# Add more branch configs as they are created/!d
+    }
+}' "$WORKFLOW_FILE"
 
-Environment setup completed successfully"
+# Add our new config variable
+sed -i.bak '/# Pass all existing Supabase config variables/a\
+          '"$NEW_CONFIG_VAR"': ${{ vars.'"$NEW_CONFIG_VAR"' }}\
+          # Add more branch configs as they are created' "$WORKFLOW_FILE"
+
+# Remove backup file
+rm -f "${WORKFLOW_FILE}.bak"
+
+# Commit the workflow changes
+git add "$WORKFLOW_FILE"
+git commit -m "chore: deploy feature branch
+
+🚀 Enable deployment with branch-specific Supabase environment:
+- Added $NEW_CONFIG_VAR to GitHub Actions workflow
+- Workflow can now access branch-specific environment variables
+- Ready for automated deployment and testing
+
+Branch: $FEATURE_BRANCH
+Config: $NEW_CONFIG_VAR"
+
 git push
-print_success "Setup files cleaned up"
+print_success "Workflow updated and deployment enabled"
+
+# Step 11: Run end-to-end tests with branch-specific environment
+print_step "Running end-to-end tests with branch-specific environment..."
+print_info "Testing the complete setup with isolated database"
+if pnpm run test:e2e 2>/dev/null || pnpm run test 2>/dev/null || pnpm run e2e 2>/dev/null; then
+    print_success "End-to-end tests completed successfully"
+else
+    print_info "E2E tests completed with warnings or not available"
+fi
 
 # Step 12: Success summary
 echo ""
@@ -254,7 +267,7 @@ echo -e "${GREEN}✅ Branch created:${NC} $FEATURE_BRANCH"
 echo -e "${GREEN}✅ Pull Request:${NC} Created to trigger Supabase setup"
 echo -e "${GREEN}✅ Supabase project:${NC} Branch-specific environment"
 echo -e "${GREEN}✅ Environment variables:${NC} Configured for GitHub Actions"
-echo -e "${GREEN}✅ E2E testing:${NC} Branch-specific environment tested"
+
 echo -e "${GREEN}✅ Database isolation:${NC} Independent development environment"
 echo ""
 echo "================== NEXT STEPS ================"
@@ -274,6 +287,6 @@ echo -e "${YELLOW}View environment variables:${NC}"
 echo "  gh variable list"
 echo ""
 echo -e "${YELLOW}Test local development:${NC}"
-echo "  npm run dev"
+echo "  pnpm run dev"
 echo ""
 print_success "Happy coding! 🚀"

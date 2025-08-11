@@ -7,6 +7,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # Skip deployment if this is the initial setup commit
+    if: "!contains(github.event.head_commit.message, 'chore: setup feature branch')"
 
     steps:
       - uses: actions/checkout@v4
@@ -44,6 +46,7 @@ jobs:
           FEAT_NEW_FEAT_FROM_DEV_SUPABASE_CONFIG: ${{ vars.FEAT_NEW_FEAT_FROM_DEV_SUPABASE_CONFIG }}
           FEAT_EXTRACT_FROM_BRANCH_SUPABASE_CONFIG: ${{ vars.FEAT_EXTRACT_FROM_BRANCH_SUPABASE_CONFIG }}
           FEAT_TRY_BRANCH_SUPABASE_CONFIG: ${{ vars.FEAT_TRY_BRANCH_SUPABASE_CONFIG }}
+          FEAT_MORE_BRANCH_CLEANUP_SUPABASE_CONFIG: ${{ vars.FEAT_MORE_BRANCH_CLEANUP_SUPABASE_CONFIG }}
           # Add more branch configs as they are created
         run: |
           # Get the JSON configuration from environment using the dynamic variable name
