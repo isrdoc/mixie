@@ -169,7 +169,9 @@ async function createGitHubEnvironmentJSON() {
       try {
         const createCmd = `gh variable set ${jsonVarName} < ${tempFile}`;
         execSync(createCmd, { stdio: "pipe" });
-        console.log(`✅ ${jsonVarName} created/updated successfully in GitHub Variables`);
+        console.log(
+          `✅ ${jsonVarName} created/updated successfully in GitHub Variables`
+        );
       } finally {
         // Clean up temp file
         if (fs.existsSync(tempFile)) {
@@ -177,10 +179,14 @@ async function createGitHubEnvironmentJSON() {
         }
       }
     } catch (variableError) {
-      console.log(`⚠️  Failed to set GitHub variable: ${variableError.message}`);
+      console.log(
+        `⚠️  Failed to set GitHub variable: ${variableError.message}`
+      );
       console.log("\n📋 Manual setup required:");
       console.log("1. Go to your GitHub repository settings");
-      console.log("2. Navigate to Secrets and variables → Actions → Variables tab");
+      console.log(
+        "2. Navigate to Secrets and variables → Actions → Variables tab"
+      );
       console.log('3. Click "New repository variable"');
       console.log(`4. Name: ${jsonVarName}`);
       console.log(`5. Value: ${compactJsonConfig}`);

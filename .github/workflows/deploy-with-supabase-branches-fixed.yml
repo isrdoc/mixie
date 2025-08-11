@@ -72,15 +72,15 @@ jobs:
           fi
 
           # Parse JSON and extract values (using jq for robust JSON parsing)
-          echo "supabase_url=$(echo "$CONFIG_JSON" | jq -r '.supabase.url')" >> $GITHUB_OUTPUT
-          echo "supabase_anon_key=$(echo "$CONFIG_JSON" | jq -r '.supabase.anonKey')" >> $GITHUB_OUTPUT
-          echo "supabase_service_role_key=$(echo "$CONFIG_JSON" | jq -r '.supabase.serviceRoleKey')" >> $GITHUB_OUTPUT
-          echo "supabase_jwt_secret=$(echo "$CONFIG_JSON" | jq -r '.supabase.jwtSecret')" >> $GITHUB_OUTPUT
-          echo "postgres_url=$(echo "$CONFIG_JSON" | jq -r '.database.url')" >> $GITHUB_OUTPUT
-          echo "postgres_host=$(echo "$CONFIG_JSON" | jq -r '.database.host')" >> $GITHUB_OUTPUT
-          echo "postgres_user=$(echo "$CONFIG_JSON" | jq -r '.database.user')" >> $GITHUB_OUTPUT
-          echo "postgres_password=$(echo "$CONFIG_JSON" | jq -r '.database.password')" >> $GITHUB_OUTPUT
-          echo "postgres_database=$(echo "$CONFIG_JSON" | jq -r '.database.database')" >> $GITHUB_OUTPUT
+          echo "supabase_url=$(echo '$CONFIG_JSON' | jq -r '.supabase.url')" >> $GITHUB_OUTPUT
+          echo "supabase_anon_key=$(echo '$CONFIG_JSON' | jq -r '.supabase.anonKey')" >> $GITHUB_OUTPUT
+          echo "supabase_service_role_key=$(echo '$CONFIG_JSON' | jq -r '.supabase.serviceRoleKey')" >> $GITHUB_OUTPUT
+          echo "supabase_jwt_secret=$(echo '$CONFIG_JSON' | jq -r '.supabase.jwtSecret')" >> $GITHUB_OUTPUT
+          echo "postgres_url=$(echo '$CONFIG_JSON' | jq -r '.database.url')" >> $GITHUB_OUTPUT
+          echo "postgres_host=$(echo '$CONFIG_JSON' | jq -r '.database.host')" >> $GITHUB_OUTPUT
+          echo "postgres_user=$(echo '$CONFIG_JSON' | jq -r '.database.user')" >> $GITHUB_OUTPUT
+          echo "postgres_password=$(echo '$CONFIG_JSON' | jq -r '.database.password')" >> $GITHUB_OUTPUT
+          echo "postgres_database=$(echo '$CONFIG_JSON' | jq -r '.database.database')" >> $GITHUB_OUTPUT
 
       - name: Build application
         env:
