@@ -11,10 +11,11 @@ To create a new feature branch, simply run:
 ```
 
 This will automatically:
-- ✅ Create `feat/your-feature-name` from `develop`
+- ✅ Create `feat/your-feature-name` from `dev`
+- ✅ Create Pull Request to trigger Supabase setup
 - ✅ Set up branch-specific Supabase project
 - ✅ Configure GitHub Actions environment variables
-- ✅ Push initial commit to trigger workflow setup
+- ✅ Complete isolated development environment
 
 ## Detailed Process
 
@@ -22,15 +23,17 @@ This will automatically:
 
 1. **Branch Creation**: Creates `feat/BRANCH_NAME` from the `dev` branch (or `main` if `dev` doesn't exist)
 
-2. **Initial Commit**: Creates and pushes an initial commit to trigger Supabase branch creation
+2. **Initial Commit**: Creates and pushes an initial commit
 
-3. **Supabase Setup**: Waits for you to confirm the Supabase project is created
+3. **Pull Request**: Creates a draft PR to trigger Supabase branch creation
 
-4. **Environment Extraction**: Runs `npm run env:extract` to get Supabase variables
+4. **Supabase Setup**: Waits for you to confirm the Supabase project is created
 
-5. **GitHub Variables**: Runs `npm run env:create-github` to set up GitHub Actions
+5. **Environment Extraction**: Runs `npm run env:extract` to get Supabase variables
 
-6. **Cleanup**: Removes temporary files and makes final commit
+6. **GitHub Variables**: Runs `npm run env:create-github` to set up GitHub Actions
+
+7. **Cleanup**: Removes temporary files and makes final commit
 
 ### Prerequisites
 
@@ -56,9 +59,10 @@ This will automatically:
 
 During the setup process, you'll need to:
 
-1. **Supabase Project Creation**: When prompted, go to your Supabase dashboard and verify that a new project was created for your branch
-2. **Environment Variables**: The script will extract and configure environment variables automatically
-3. **Confirmation**: Press Enter when the Supabase project is ready
+1. **Pull Request**: The script automatically creates a draft PR which triggers Supabase branch creation
+2. **Supabase Project Creation**: When prompted, go to your Supabase dashboard and verify that a new project was created for your branch
+3. **Environment Variables**: The script will extract and configure environment variables automatically
+4. **Confirmation**: Press Enter when the Supabase project is ready
 
 ### Alternative Methods
 

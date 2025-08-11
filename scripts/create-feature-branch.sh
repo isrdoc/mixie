@@ -136,20 +136,65 @@ Created: $(date)"
 print_success "Initial commit created"
 
 # Step 6: Push feature branch to trigger Supabase branch creation
-print_step "Pushing to GitHub to trigger Supabase branch creation..."
+print_step "Pushing to GitHub..."
 git push -u origin "$FEATURE_BRANCH"
 print_success "Feature branch pushed to GitHub"
 
-# Step 7: Wait for Supabase branch creation
-print_step "Waiting for Supabase branch creation..."
-print_info "This may take a few moments while Supabase creates the branch-specific project..."
-echo ""
-print_warning "Please go to your Supabase dashboard and:"
-print_warning "1. Verify that a new project was created for branch: $BRANCH_NAME"
-print_warning "2. Note down the project URL and keys"
-print_warning "3. Press Enter when the Supabase project is ready"
-echo ""
-read -p "Press Enter when Supabase branch project is ready..."
+# Step 7: Create Pull Request to trigger Supabase branch creation
+print_step "Creating Pull Request to trigger Supabase branch creation..."
+PR_TITLE="feat: $BRANCH_NAME - initial setup"
+PR_BODY="## 🚀 Feature Branch: $FEATURE_BRANCH
+
+This pull request sets up the initial development environment for the **$BRANCH_NAME** feature.
+
+### 🎯 What's Included:
+- ✅ Feature branch created from \`dev\`
+- ✅ Initial commit to trigger Supabase branch creation
+- ✅ Ready for feature development
+
+### 🔄 Automatic Setup:
+- 🗄️ **Supabase**: Branch-specific database environment
+- 🚀 **Deployments**: Automatic preview deployments
+- 🧪 **Testing**: Isolated testing environment
+
+### 📋 Next Steps:
+1. Supabase will automatically create a branch-specific project
+2. Environment variables will be configured
+3. Start developing the feature
+4. Push commits to see automatic deployments
+
+---
+**Branch**: \`$FEATURE_BRANCH\`  
+**Created**: $(date)  
+**Type**: Feature development setup"
+
+# Create the pull request
+if gh pr create --title "$PR_TITLE" --body "$PR_BODY" --base dev --head "$FEATURE_BRANCH" --draft; then
+    print_success "Pull Request created successfully!"
+    
+    # Get the PR URL
+    PR_URL=$(gh pr view --json url --jq '.url')
+    print_info "PR URL: $PR_URL"
+    
+    print_step "Waiting for Supabase branch creation..."
+    print_info "The PR creation will trigger Supabase to create a branch-specific project"
+    print_info "This may take a few moments..."
+    echo ""
+    print_warning "Please check your Supabase dashboard and GitHub Actions:"
+    print_warning "1. Verify that a new Supabase project was created for branch: $BRANCH_NAME"
+    print_warning "2. Check GitHub Actions workflow is running"
+    print_warning "3. Note down the Supabase project URL and keys when ready"
+    print_warning "4. Press Enter when the Supabase project is ready"
+    echo ""
+    read -p "Press Enter when Supabase branch project is ready..."
+else
+    print_error "Failed to create Pull Request"
+    print_info "You can create it manually later with:"
+    print_info "gh pr create --title '$PR_TITLE' --body 'Initial setup for $FEATURE_BRANCH' --base dev --head $FEATURE_BRANCH"
+    print_warning "Note: Supabase branch creation is triggered by PR creation"
+    echo ""
+    read -p "Press Enter to continue with manual setup..."
+fi
 
 # Step 8: Extract Supabase environment variables
 print_step "Extracting Supabase environment variables..."
@@ -201,6 +246,7 @@ print_success "🎉 Feature branch setup completed successfully!"
 echo ""
 echo "================== SUMMARY =================="
 echo -e "${GREEN}✅ Branch created:${NC} $FEATURE_BRANCH"
+echo -e "${GREEN}✅ Pull Request:${NC} Created to trigger Supabase setup"
 echo -e "${GREEN}✅ Supabase project:${NC} Branch-specific environment"
 echo -e "${GREEN}✅ Environment variables:${NC} Configured for GitHub Actions"
 echo -e "${GREEN}✅ Database isolation:${NC} Independent development environment"
@@ -212,6 +258,9 @@ echo -e "${CYAN}3.${NC} Push commits to trigger automatic deployments"
 echo -e "${CYAN}4.${NC} Create a pull request when ready"
 echo ""
 echo "================== USEFUL COMMANDS ==========="
+echo -e "${YELLOW}Check Pull Request:${NC}"
+echo "  gh pr view"
+echo ""
 echo -e "${YELLOW}Check deployment status:${NC}"
 echo "  gh run list --branch $FEATURE_BRANCH"
 echo ""

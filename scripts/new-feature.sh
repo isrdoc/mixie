@@ -15,9 +15,10 @@ if [ -z "$1" ]; then
     echo ""
     echo "This will:"
     echo "  ✅ Create feat/BRANCH_NAME from dev"
+    echo "  ✅ Create Pull Request to trigger Supabase"
     echo "  ✅ Set up Supabase branch environment"
     echo "  ✅ Configure GitHub Actions variables"
-    echo "  ✅ Push initial commit to trigger setup"
+    echo "  ✅ Complete isolated development setup"
     echo ""
     exit 1
 fi
