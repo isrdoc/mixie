@@ -12,11 +12,15 @@
     "db:stop": "supabase stop",
     "db:status": "supabase status",
     "db:reset": "supabase db reset",
-    "env:sync:feat": "node scripts/sync-env-feat.js",
-    "test:preview": "node scripts/test-preview-branch.js"
+    "env:extract": "node scripts/extract-supabase-env-complete.js",
+    "env:create-vercel": "node scripts/create-vercel-env-json.js",
+    "env:test-config": "node scripts/test-json-config.js",
+    "env:check-limits": "node scripts/check-vercel-env-limits.js"
   },
   "devDependencies": {
+    "@playwright/test": "^1.54.2",
     "eslint": "^8.57.0",
+    "playwright": "^1.54.2",
     "prettier": "^3.2.5",
     "supabase": "^2.33.9",
     "turbo": "^2.5.5",

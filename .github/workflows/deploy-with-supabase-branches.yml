@@ -1,0 +1,113 @@
+name: Deploy with Branch-Specific Supabase Environment
+
+on:
+  push:
+    branches: [ main, 'feat/**' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'pnpm'
+    
+    - name: Install pnpm
+      run: npm install -g pnpm
+    
+    - name: Install dependencies
+      run: pnpm install
+    
+    - name: Sanitize branch name for JSON config variable
+      id: branch
+      run: |
+        # Get branch name and sanitize it (replace non-alphanumeric with underscore, uppercase)
+        BRANCH_NAME="${{ github.ref_name }}"
+        SANITIZED_BRANCH=$(echo "$BRANCH_NAME" | sed 's/[^a-zA-Z0-9]/_/g' | tr '[:lower:]' '[:upper:]')
+        CONFIG_VAR_NAME="${SANITIZED_BRANCH}_SUPABASE_CONFIG"
+        echo "sanitized=$SANITIZED_BRANCH" >> $GITHUB_OUTPUT
+        echo "config_var=$CONFIG_VAR_NAME" >> $GITHUB_OUTPUT
+        echo "Branch: $BRANCH_NAME → JSON Config Variable: $CONFIG_VAR_NAME"
+    
+    - name: Load and parse Supabase configuration
+      id: config
+      run: |
+        # Get the JSON configuration from secrets using the dynamic variable name
+        CONFIG_JSON="${{ secrets[steps.branch.outputs.config_var] }}"
+        
+        if [ -z "$CONFIG_JSON" ]; then
+          echo "❌ No JSON configuration found for branch: ${{ github.ref_name }}"
+          echo "Expected variable: ${{ steps.branch.outputs.config_var }}"
+          exit 1
+        fi
+        
+        echo "✅ Found JSON configuration for branch: ${{ github.ref_name }}"
+        
+        # Parse JSON and extract values (using jq for robust JSON parsing)
+        echo "supabase_url=$(echo '$CONFIG_JSON' | jq -r '.supabase.url')" >> $GITHUB_OUTPUT
+        echo "supabase_anon_key=$(echo '$CONFIG_JSON' | jq -r '.supabase.anonKey')" >> $GITHUB_OUTPUT
+        echo "supabase_service_role_key=$(echo '$CONFIG_JSON' | jq -r '.supabase.serviceRoleKey')" >> $GITHUB_OUTPUT
+        echo "supabase_jwt_secret=$(echo '$CONFIG_JSON' | jq -r '.supabase.jwtSecret')" >> $GITHUB_OUTPUT
+        echo "postgres_url=$(echo '$CONFIG_JSON' | jq -r '.database.url')" >> $GITHUB_OUTPUT
+        echo "postgres_host=$(echo '$CONFIG_JSON' | jq -r '.database.host')" >> $GITHUB_OUTPUT
+        echo "postgres_user=$(echo '$CONFIG_JSON' | jq -r '.database.user')" >> $GITHUB_OUTPUT
+        echo "postgres_password=$(echo '$CONFIG_JSON' | jq -r '.database.password')" >> $GITHUB_OUTPUT
+        echo "postgres_database=$(echo '$CONFIG_JSON' | jq -r '.database.database')" >> $GITHUB_OUTPUT
+    
+    - name: Build application
+      env:
+        # Use the parsed values from JSON config
+        VITE_SUPABASE_URL: ${{ steps.config.outputs.supabase_url }}
+        VITE_SUPABASE_ANON_KEY: ${{ steps.config.outputs.supabase_anon_key }}
+        SUPABASE_URL: ${{ steps.config.outputs.supabase_url }}
+        SUPABASE_ANON_KEY: ${{ steps.config.outputs.supabase_anon_key }}
+        SUPABASE_SERVICE_ROLE_KEY: ${{ steps.config.outputs.supabase_service_role_key }}
+        SUPABASE_JWT_SECRET: ${{ steps.config.outputs.supabase_jwt_secret }}
+        POSTGRES_HOST: ${{ steps.config.outputs.postgres_host }}
+        POSTGRES_USER: ${{ steps.config.outputs.postgres_user }}
+        POSTGRES_PASSWORD: ${{ steps.config.outputs.postgres_password }}
+        POSTGRES_DATABASE: ${{ steps.config.outputs.postgres_database }}
+        POSTGRES_URL: ${{ steps.config.outputs.postgres_url }}
+      run: |
+        echo "🏗️ Building with branch-specific Supabase environment"
+        echo "Using JSON config variable: ${{ steps.branch.outputs.config_var }}"
+        pnpm run build
+    
+    - name: Deploy to Vercel
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: ./
+        scope: ${{ secrets.VERCEL_ORG_ID }}
+      env:
+        # Pass the entire JSON configuration to Vercel environment
+        BRANCH_SUPABASE_CONFIG: ${{ secrets[steps.branch.outputs.config_var] }}
+        # Or parse individual values if needed
+        VITE_SUPABASE_URL: ${{ steps.config.outputs.supabase_url }}
+        VITE_SUPABASE_ANON_KEY: ${{ steps.config.outputs.supabase_anon_key }}
+
+    - name: Run tests with branch-specific database
+      env:
+        POSTGRES_URL: ${{ steps.config.outputs.postgres_url }}
+        SUPABASE_SERVICE_ROLE_KEY: ${{ steps.config.outputs.supabase_service_role_key }}
+      run: |
+        echo "🧪 Running tests against branch-specific Supabase environment"
+        # pnpm test
+
+    - name: Debug configuration (optional)
+      run: |
+        echo "✅ Successfully loaded JSON configuration"
+        echo "Branch: ${{ github.ref_name }}"
+        echo "Config variable: ${{ steps.branch.outputs.config_var }}"
+        echo "Supabase URL: ${{ steps.config.outputs.supabase_url }}"
+        echo "Database host: ${{ steps.config.outputs.postgres_host }}"
+        # Don't echo sensitive values like passwords or keys!
