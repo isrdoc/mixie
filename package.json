@@ -12,8 +12,8 @@
     "db:stop": "supabase stop",
     "db:status": "supabase status",
     "db:reset": "supabase db reset",
-    "env:create-github": "node scripts/create-github-env-json.js",
-    "env:check-limits": "node scripts/check-vercel-env-limits.js"
+    "env:extract": "node scripts/extract-supabase-env.js",
+    "env:create-github": "node scripts/create-github-env-json.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",
