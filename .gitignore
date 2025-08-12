@@ -9,3 +9,8 @@ dist-ssr
 server/dist
 public/dist
 .vercel
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
