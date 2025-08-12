@@ -533,6 +533,10 @@ async function extractSupabaseEnvVars() {
 
     // Step 5: Build Environment Variables
     console.log("📝 Building environment configuration...");
+    
+    // Use the final detected project ref for all database connections
+    const finalProjectRef = global.SUPABASE_PROJECT_REF || SUPABASE_PROJECT_REF;
+    console.log(`🎯 Using project ref for database connections: ${finalProjectRef}`);
 
     const envVars = {
       VITE_SUPABASE_URL: projectUrl,
@@ -541,23 +545,23 @@ async function extractSupabaseEnvVars() {
       SUPABASE_ANON_KEY: anonKey,
       SUPABASE_SERVICE_ROLE_KEY: serviceRoleKey,
       SUPABASE_JWT_SECRET: jwtSecret,
-      POSTGRES_HOST: `db.${SUPABASE_PROJECT_REF}.supabase.co`,
-      POSTGRES_USER: `postgres.${SUPABASE_PROJECT_REF}`,
+      POSTGRES_HOST: `db.${finalProjectRef}.supabase.co`,
+      POSTGRES_USER: `postgres.${finalProjectRef}`,
       POSTGRES_PASSWORD: dbPassword || "[MANUAL_SETUP_REQUIRED]",
       POSTGRES_DATABASE: "postgres",
     };
 
     // Build connection strings
     if (dbPassword) {
-      envVars.POSTGRES_URL = `postgres://postgres.${SUPABASE_PROJECT_REF}:${dbPassword}@aws-0-eu-central-1.pooler.supabase.com:6543/postgres?sslmode=require&supa=base-pooler.x`;
-      envVars.POSTGRES_URL_NON_POOLING = `postgres://postgres.${SUPABASE_PROJECT_REF}:${dbPassword}@aws-0-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`;
+      envVars.POSTGRES_URL = `postgres://postgres.${finalProjectRef}:${dbPassword}@aws-0-eu-central-1.pooler.supabase.com:6543/postgres?sslmode=require&supa=base-pooler.x`;
+      envVars.POSTGRES_URL_NON_POOLING = `postgres://postgres.${finalProjectRef}:${dbPassword}@aws-0-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`;
     }
 
     // Step 6: Write to .env.feat
     console.log("💾 Writing environment variables to .env.feat...");
 
     const envContent = `# Supabase Environment Variables (Extracted: ${new Date().toISOString()})
-# Project: ${SUPABASE_PROJECT_REF}
+# Project: ${finalProjectRef}
 
 # Vite/Frontend variables (exposed to browser)
 VITE_SUPABASE_URL=${envVars.VITE_SUPABASE_URL}
