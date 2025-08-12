@@ -74,33 +74,18 @@ if [ ! -f "package.json" ] || [ ! -d ".git" ]; then
 fi
 print_success "Project directory confirmed"
 
-# Step 2: Check if dev branch exists and switch to it
-print_step "Switching to dev branch..."
-if ! git rev-parse --verify dev >/dev/null 2>&1; then
-    print_warning "Dev branch not found, using main branch instead"
-    git checkout main
-    git pull origin main
-else
-    git checkout dev
-    git pull origin dev
-fi
-print_success "Base branch updated"
+# Step 2: Check if we're already on the target branch
+CURRENT_BRANCH=$(git branch --show-current)
+print_step "Checking current branch..."
+print_info "Currently on branch: $CURRENT_BRANCH"
 
-# Step 3: Check if feature branch already exists
-print_step "Checking if feature branch already exists..."
 BRANCH_EXISTS=false
-if git rev-parse --verify "$FEATURE_BRANCH" >/dev/null 2>&1; then
-    print_warning "Branch $FEATURE_BRANCH already exists!"
-    print_info "Checking out existing branch and continuing with setup..."
-    BRANCH_EXISTS=true
-else
-    print_success "Branch name is available"
-fi
+ALREADY_ON_TARGET=false
 
-# Step 4: Create or checkout feature branch
-if [ "$BRANCH_EXISTS" = true ]; then
-    print_step "Checking out existing feature branch: $FEATURE_BRANCH"
-    git checkout "$FEATURE_BRANCH"
+if [ "$CURRENT_BRANCH" = "$FEATURE_BRANCH" ]; then
+    print_success "Already on target branch: $FEATURE_BRANCH"
+    ALREADY_ON_TARGET=true
+    BRANCH_EXISTS=true
     
     # Pull latest changes if it's a remote branch
     if git rev-parse --verify "origin/$FEATURE_BRANCH" >/dev/null 2>&1; then
@@ -108,14 +93,50 @@ if [ "$BRANCH_EXISTS" = true ]; then
         git pull origin "$FEATURE_BRANCH" || print_warning "Could not pull from remote, continuing..."
     fi
     
-    print_success "Existing feature branch checked out"
+    print_success "Ready to continue with setup on current branch"
 else
-    print_step "Creating feature branch: $FEATURE_BRANCH"
-    git checkout -b "$FEATURE_BRANCH"
-    print_success "Feature branch created and checked out"
+    # Step 3: Check if dev branch exists and switch to it
+    print_step "Switching to base branch..."
+    if ! git rev-parse --verify dev >/dev/null 2>&1; then
+        print_warning "Dev branch not found, using main branch instead"
+        git checkout main
+        git pull origin main
+    else
+        git checkout dev
+        git pull origin dev
+    fi
+    print_success "Base branch updated"
+
+    # Step 4: Check if feature branch already exists
+    print_step "Checking if feature branch already exists..."
+    if git rev-parse --verify "$FEATURE_BRANCH" >/dev/null 2>&1; then
+        print_warning "Branch $FEATURE_BRANCH already exists!"
+        print_info "Checking out existing branch and continuing with setup..."
+        BRANCH_EXISTS=true
+    else
+        print_success "Branch name is available"
+    fi
+
+    # Step 5: Create or checkout feature branch
+    if [ "$BRANCH_EXISTS" = true ]; then
+        print_step "Checking out existing feature branch: $FEATURE_BRANCH"
+        git checkout "$FEATURE_BRANCH"
+        
+        # Pull latest changes if it's a remote branch
+        if git rev-parse --verify "origin/$FEATURE_BRANCH" >/dev/null 2>&1; then
+            print_step "Pulling latest changes from remote..."
+            git pull origin "$FEATURE_BRANCH" || print_warning "Could not pull from remote, continuing..."
+        fi
+        
+        print_success "Existing feature branch checked out"
+    else
+        print_step "Creating feature branch: $FEATURE_BRANCH"
+        git checkout -b "$FEATURE_BRANCH"
+        print_success "Feature branch created and checked out"
+    fi
 fi
 
-# Step 5: Create initial commit to trigger Supabase branch creation (only for new branches)
+# Step 6: Create initial commit to trigger Supabase branch creation (only for new branches)
 if [ "$BRANCH_EXISTS" = false ]; then
     print_step "Creating initial commit to trigger Supabase branch creation..."
     git commit --allow-empty -m "chore: setup feature branch
@@ -133,7 +154,7 @@ else
     print_info "Branch already exists, skipping initial commit"
 fi
 
-# Step 6: Push feature branch to trigger Supabase branch creation
+# Step 7: Push feature branch to trigger Supabase branch creation
 print_step "Pushing to GitHub..."
 if [ "$BRANCH_EXISTS" = false ]; then
     git push -u origin "$FEATURE_BRANCH"
@@ -143,7 +164,7 @@ else
 fi
 print_success "Feature branch synced with GitHub"
 
-# Step 7: Create Pull Request to trigger Supabase branch creation (only for new branches)
+# Step 8: Create Pull Request to trigger Supabase branch creation (only for new branches)
 print_step "Checking for existing Pull Request..."
 EXISTING_PR=$(gh pr list --head "$FEATURE_BRANCH" --json number --jq '.[0].number' 2>/dev/null || echo "")
 
@@ -205,7 +226,7 @@ else
     print_info "You can create a PR manually if needed: gh pr create --base dev --head $FEATURE_BRANCH"
 fi
 
-# Step 8: Extract Supabase environment variables
+# Step 9: Extract Supabase environment variables
 print_step "Extracting Supabase environment variables..."
 if [ ! -f "scripts/extract-supabase-env.js" ]; then
     print_error "extract-supabase-env.js script not found!"
@@ -222,7 +243,7 @@ else
     print_info "You may need to run 'pnpm run env:extract' manually later"
 fi
 
-# Step 9: Create GitHub environment variables
+# Step 10: Create GitHub environment variables
 print_step "Creating GitHub environment variables..."
 if [ ! -f "scripts/create-github-env-json.js" ]; then
     print_error "create-github-env-json.js script not found!"
@@ -240,7 +261,7 @@ else
     exit 1
 fi
 
-# Step 10: Update workflow and commit to enable deployment
+# Step 11: Update workflow and commit to enable deployment
 print_step "Updating GitHub Actions workflow to enable deployment..."
 print_info "Adding branch-specific config variable to workflow"
 
@@ -297,7 +318,7 @@ Config: $NEW_CONFIG_VAR"
     fi
 fi
 
-# Step 11: Run end-to-end tests with branch-specific environment
+# Step 12: Run end-to-end tests with branch-specific environment
 print_step "Running end-to-end tests with branch-specific environment..."
 print_info "Testing the complete setup with isolated database"
 if pnpm run test:e2e 2>/dev/null || pnpm run test 2>/dev/null || pnpm run e2e 2>/dev/null; then
@@ -306,12 +327,15 @@ else
     print_info "E2E tests completed with warnings or not available"
 fi
 
-# Step 12: Success summary
+# Step 13: Success summary
 echo ""
 print_success "🎉 Feature branch setup completed successfully!"
 echo ""
 echo "================== SUMMARY =================="
-if [ "$BRANCH_EXISTS" = true ]; then
+if [ "$ALREADY_ON_TARGET" = true ]; then
+    echo -e "${GREEN}✅ Branch status:${NC} Already on $FEATURE_BRANCH (continued setup)"
+    echo -e "${GREEN}✅ Pull Request:${NC} Using existing PR or skipped"
+elif [ "$BRANCH_EXISTS" = true ]; then
     echo -e "${GREEN}✅ Branch checked out:${NC} $FEATURE_BRANCH (existing)"
     echo -e "${GREEN}✅ Pull Request:${NC} Using existing PR or skipped"
 else
