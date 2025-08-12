@@ -327,7 +327,7 @@ async function extractSupabaseEnvVars() {
 
     // Step 3.5: Navigate to JWT settings to get JWT secret
     console.log("🔐 Navigating to JWT settings for JWT secret...");
-    await page.goto(`${SUPABASE_DASHBOARD_URL}/settings/jwt`, {
+    await page.goto(`${finalDashboardUrl}/settings/jwt`, {
       waitUntil: "domcontentloaded",
       timeout: 30000,
     });
@@ -384,7 +384,7 @@ async function extractSupabaseEnvVars() {
 
     // Step 4: Reset database password
     console.log("🔄 Navigating to database settings to reset password...");
-    await page.goto(`${SUPABASE_DASHBOARD_URL}/database/settings`, {
+    await page.goto(`${finalDashboardUrl}/database/settings`, {
       waitUntil: "domcontentloaded",
       timeout: 30000,
     });
@@ -533,6 +533,9 @@ async function extractSupabaseEnvVars() {
 
     // Step 5: Build Environment Variables
     console.log("📝 Building environment configuration...");
+    
+    // Use the final detected project ref for all database connections (reuse existing variable)
+    console.log(`🎯 Using project ref for database connections: ${finalProjectRef}`);
 
     const envVars = {
       VITE_SUPABASE_URL: projectUrl,
@@ -541,23 +544,23 @@ async function extractSupabaseEnvVars() {
       SUPABASE_ANON_KEY: anonKey,
       SUPABASE_SERVICE_ROLE_KEY: serviceRoleKey,
       SUPABASE_JWT_SECRET: jwtSecret,
-      POSTGRES_HOST: `db.${SUPABASE_PROJECT_REF}.supabase.co`,
-      POSTGRES_USER: `postgres.${SUPABASE_PROJECT_REF}`,
+      POSTGRES_HOST: `db.${finalProjectRef}.supabase.co`,
+      POSTGRES_USER: `postgres.${finalProjectRef}`,
       POSTGRES_PASSWORD: dbPassword || "[MANUAL_SETUP_REQUIRED]",
       POSTGRES_DATABASE: "postgres",
     };
 
     // Build connection strings
     if (dbPassword) {
-      envVars.POSTGRES_URL = `postgres://postgres.${SUPABASE_PROJECT_REF}:${dbPassword}@aws-0-eu-central-1.pooler.supabase.com:6543/postgres?sslmode=require&supa=base-pooler.x`;
-      envVars.POSTGRES_URL_NON_POOLING = `postgres://postgres.${SUPABASE_PROJECT_REF}:${dbPassword}@aws-0-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`;
+      envVars.POSTGRES_URL = `postgres://postgres.${finalProjectRef}:${dbPassword}@aws-0-eu-central-1.pooler.supabase.com:6543/postgres?sslmode=require&supa=base-pooler.x`;
+      envVars.POSTGRES_URL_NON_POOLING = `postgres://postgres.${finalProjectRef}:${dbPassword}@aws-0-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`;
     }
 
     // Step 6: Write to .env.feat
     console.log("💾 Writing environment variables to .env.feat...");
 
     const envContent = `# Supabase Environment Variables (Extracted: ${new Date().toISOString()})
-# Project: ${SUPABASE_PROJECT_REF}
+# Project: ${finalProjectRef}
 
 # Vite/Frontend variables (exposed to browser)
 VITE_SUPABASE_URL=${envVars.VITE_SUPABASE_URL}

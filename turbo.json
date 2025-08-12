@@ -12,6 +12,19 @@
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "test": {
+      "inputs": ["$TURBO_DEFAULT$", "test-results/**", "playwright-report/**"],
+      "outputs": ["test-results/**", "playwright-report/**"]
+    },
+    "test:e2e": {
+      "dependsOn": ["build"],
+      "inputs": ["$TURBO_DEFAULT$", "e2e/**", "playwright.config.*"],
+      "outputs": ["test-results/**", "playwright-report/**"]
+    },
+    "test:e2e:ui": {
+      "cache": false,
+      "persistent": true
     }
   },
   "globalEnv": ["VERCEL_URL", "VERCEL_ENV"]
