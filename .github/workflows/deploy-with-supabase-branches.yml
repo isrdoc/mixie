@@ -123,7 +123,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-report-${{ github.ref_name }}
+          name: playwright-report-${{ steps.branch.outputs.sanitized }}
           path: apps/web/playwright-report/
           retention-days: 30
 
@@ -131,7 +131,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: test-results-${{ github.ref_name }}
+          name: test-results-${{ steps.branch.outputs.sanitized }}
           path: apps/web/test-results/
           retention-days: 7
 
