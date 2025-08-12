@@ -1,6 +1,6 @@
 -- Seed data for Mixie Music Platform
 
--- Insert sample songs
+-- Insert sample songs (with conflict resolution)
 INSERT INTO songs (title, artist, album, duration_ms, genre, spotify_id, apple_music_id) VALUES
 ('Bohemian Rhapsody', 'Queen', 'A Night at the Opera', 355000, ARRAY['rock', 'progressive rock'], 'spotify:track:3z8h0TU7ReDPLIbEnYhWZb', 'apple:1234567'),
 ('Billie Jean', 'Michael Jackson', 'Thriller', 294000, ARRAY['pop', 'funk'], 'spotify:track:4u7EnebtmKWzUH433cf5Qv', 'apple:1234568'),
@@ -11,7 +11,8 @@ INSERT INTO songs (title, artist, album, duration_ms, genre, spotify_id, apple_m
 ('Smells Like Teen Spirit', 'Nirvana', 'Nevermind', 301000, ARRAY['grunge', 'alternative rock'], 'spotify:track:4CeeEOM32jQcH3eN9Q2dGj', 'apple:1234573'),
 ('Yesterday', 'The Beatles', 'Help!', 125000, ARRAY['pop', 'baroque pop'], 'spotify:track:3BQHpFgAp4l80e1XslIjNI', 'apple:1234574'),
 ('Purple Haze', 'Jimi Hendrix', 'Are You Experienced', 169000, ARRAY['rock', 'psychedelic rock'], 'spotify:track:0wJoRiX5K5BxlqZTolB2LD', 'apple:1234575'),
-('Good Vibrations', 'The Beach Boys', 'Pet Sounds', 218000, ARRAY['pop', 'psychedelic pop'], 'spotify:track:5BIMPccDwShpXq784RJlJp', 'apple:1234576');
+('Good Vibrations', 'The Beach Boys', 'Pet Sounds', 218000, ARRAY['pop', 'psychedelic pop'], 'spotify:track:5BIMPccDwShpXq784RJlJp', 'apple:1234576')
+ON CONFLICT (title, artist, album) DO NOTHING;
 
 -- Note: We cannot insert into auth.users directly in a migration
 -- This would typically be done through Supabase Auth or manually in the dashboard
