@@ -40,8 +40,8 @@ jobs:
         id: config
         env:
           # Pass all existing Supabase config variables as environment variables
-          FEAT_TWO_STEP_COMMIT_SETUP_SUPABASE_CONFIG: ${{ vars.FEAT_TWO_STEP_COMMIT_SETUP_SUPABASE_CONFIG }}
-          # Add more branch configs as they are created          # Add more branch configs as they are created
+          FEAT_E2E_TESTS_CI_SUPABASE_CONFIG: ${{ vars.FEAT_E2E_TESTS_CI_SUPABASE_CONFIG }}
+          # Add more branch configs as they are created          # Add more branch configs as they are created          # Add more branch configs as they are created
         run: |
           # Get the JSON configuration from environment using the dynamic variable name
           CONFIG_VAR_NAME="${{ steps.branch.outputs.config_var }}"
