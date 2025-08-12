@@ -327,7 +327,7 @@ async function extractSupabaseEnvVars() {
 
     // Step 3.5: Navigate to JWT settings to get JWT secret
     console.log("🔐 Navigating to JWT settings for JWT secret...");
-    await page.goto(`${SUPABASE_DASHBOARD_URL}/settings/jwt`, {
+    await page.goto(`${finalDashboardUrl}/settings/jwt`, {
       waitUntil: "domcontentloaded",
       timeout: 30000,
     });
@@ -384,7 +384,7 @@ async function extractSupabaseEnvVars() {
 
     // Step 4: Reset database password
     console.log("🔄 Navigating to database settings to reset password...");
-    await page.goto(`${SUPABASE_DASHBOARD_URL}/database/settings`, {
+    await page.goto(`${finalDashboardUrl}/database/settings`, {
       waitUntil: "domcontentloaded",
       timeout: 30000,
     });
@@ -534,8 +534,7 @@ async function extractSupabaseEnvVars() {
     // Step 5: Build Environment Variables
     console.log("📝 Building environment configuration...");
     
-    // Use the final detected project ref for all database connections
-    const finalProjectRef = global.SUPABASE_PROJECT_REF || SUPABASE_PROJECT_REF;
+    // Use the final detected project ref for all database connections (reuse existing variable)
     console.log(`🎯 Using project ref for database connections: ${finalProjectRef}`);
 
     const envVars = {
