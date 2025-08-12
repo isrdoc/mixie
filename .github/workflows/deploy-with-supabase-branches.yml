@@ -97,13 +97,43 @@ jobs:
           VITE_SUPABASE_URL: ${{ steps.config.outputs.supabase_url }}
           VITE_SUPABASE_ANON_KEY: ${{ steps.config.outputs.supabase_anon_key }}
 
-      - name: Run tests with branch-specific database
+      - name: Install Playwright browsers
+        run: pnpm playwright install --with-deps
+
+      - name: Run E2E tests with branch-specific database
         env:
-          POSTGRES_URL: ${{ steps.config.outputs.postgres_url }}
+          # Supabase environment variables for E2E tests
+          VITE_SUPABASE_URL: ${{ steps.config.outputs.supabase_url }}
+          VITE_SUPABASE_ANON_KEY: ${{ steps.config.outputs.supabase_anon_key }}
+          SUPABASE_URL: ${{ steps.config.outputs.supabase_url }}
+          SUPABASE_ANON_KEY: ${{ steps.config.outputs.supabase_anon_key }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ steps.config.outputs.supabase_service_role_key }}
+          SUPABASE_JWT_SECRET: ${{ steps.config.outputs.supabase_jwt_secret }}
+          POSTGRES_URL: ${{ steps.config.outputs.postgres_url }}
+          POSTGRES_HOST: ${{ steps.config.outputs.postgres_host }}
+          POSTGRES_USER: ${{ steps.config.outputs.postgres_user }}
+          POSTGRES_PASSWORD: ${{ steps.config.outputs.postgres_password }}
+          POSTGRES_DATABASE: ${{ steps.config.outputs.postgres_database }}
         run: |
-          echo "🧪 Running tests against branch-specific Supabase environment"
-          # pnpm test
+          echo "🧪 Running E2E tests against branch-specific Supabase environment"
+          echo "🔗 Testing against: ${{ steps.config.outputs.supabase_url }}"
+          pnpm test:e2e
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report-${{ github.ref_name }}
+          path: apps/web/playwright-report/
+          retention-days: 30
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ github.ref_name }}
+          path: apps/web/test-results/
+          retention-days: 7
 
       - name: Debug configuration (optional)
         run: |
